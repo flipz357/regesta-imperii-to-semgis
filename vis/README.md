@@ -33,6 +33,6 @@ python export_google_map_geo_history_like_json.py --only_show_possible_emperors
 python geo_heatmap.py -mo 0.1 googlemaphistory/googlemaphistory-Friedrich_III.-charter.json
 ```
 
-This will open a browser window with the heatmap.
+This will write an html and open a browser window with the heatmap. It should look similar to ![this](example_img/example_fr3.png)
 
 
