@@ -83,12 +83,26 @@ Alternatively, you can try the whole process with toy data first
 
 ## Fully processed automatic annotations
 
-You can download the [place predictions for charter origins](https://drive.google.com/file/d/1EJbM_F79PWlhyTlMe5BVnG-9NcrZWjYD/view?usp=sharing) and the [place predictions for named entities occuring in the charter texts, along with some NLP annotations](https://drive.google.com/file/d/1vCxMowifdm_V81zmXl4UbLJBNqWjsAlD/view?usp=sharing).
+You can download the 
+1. [place predictions for charter origins](https://drive.google.com/file/d/1EJbM_F79PWlhyTlMe5BVnG-9NcrZWjYD/view?usp=sharing) and the 
+2. [place predictions for named entities occuring in the charter texts, along with some NLP annotations](https://drive.google.com/file/d/1vCxMowifdm_V81zmXl4UbLJBNqWjsAlD/view?usp=sharing).
 
 ## what else can you do with this project?
 
-By using the individual building blocks of this project, you can do specific things: For example, you can get up-to-date RI-snapshots in xml (see ri-crawler), scripts to convert the xml files into nicer json and do dependency parsing and NER (see src/ and src/data\_helpers.py), scripts to plot heatmaps (see vis/), and more. We recommend peaking into the bash script full\_pipeline.sh to get an overview over some central steps.
+By using the individual building blocks of this project, you can do specific things: For example, 
+- you can get up-to-date RI-snapshots in xml (see ri-crawler), scripts to convert the xml files into nicer json 
+- do dependency parsing and NER (see src/ and src/data\_helpers.py)
+- scripts to plot heatmaps (see vis/)
+
+We recommend peaking into the bash script full\_pipeline.sh to get an overview over some central steps.
 
 ## what can be done to improve this project?
 
-On a technical level, we would like to make the code run faster (parallelization?). On a prediction performance level we would like to increase the accuracy of the resolutions. Here, the place name matching may be improved or/and the candidate coverage could be increased, by using additional geo data bases. However, there may be many more options that could improve the predictions and the traveling cost formula may be improved significantly or place prediction may be addressed with a compeltely different technique. It would be also nice to "type" the named entities (for example into monasteries, cities, persons, etc. since using spacy NER alone is too coarse grained for many purposes).
+- On a technical level, we would like to make the code run faster (parallelization?). 
+- On a prediction performance level we would like to increase the accuracy of the resolutions. 
+..- the place name matching may be improved 
+..- the candidate coverage could be increased, by using additional geo data bases. 
+..- the traveling cost formula may be improved significantly or 
+..- place prediction may be addressed with a compeltely different technique. 
+..- it would be also nice to "type" the named entities (for example into monasteries, cities, persons, etc. since using spacy NER alone is too coarse grained for many purposes)
+..- or write analyses scripts that, e.g., compare emperors w.r.t. to their geo-spatial ruling habits
