@@ -12,7 +12,21 @@ Let's grab the geo names data base:
 ./quick_download_geo_names.sh
 ```
 
-And install necessary python modules:
+#### Recommended additional preparations
+
+We recommend to create a virtual python 3 environment, e.g.:
+
+```
+virtualenv -p /usr/bin/python3.7 ri-env
+```
+
+and activate it
+
+```
+source activate ri-env/bin/activate
+```
+
+And then we install necessary python modules:
 
 ```
 pip install -r requirements.txt
