@@ -23,13 +23,19 @@ virtualenv -p /usr/bin/python3.7 ri-env
 and activate it
 
 ```
-source activate ri-env/bin/activate
+source ri-env/bin/activate
 ```
 
 And then we install necessary python modules:
 
 ```
 pip install -r requirements.txt
+```
+
+And download an NLP model for German:
+
+```
+python -m spacy download de_core_news_md-2.2.5 --direct
 ```
 
 ### Pipelines
