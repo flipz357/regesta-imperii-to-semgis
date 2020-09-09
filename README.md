@@ -113,6 +113,7 @@ By using the individual building blocks of this project, you can do specific thi
 - you can get up-to-date RI-snapshots in xml (see ri-crawler), scripts to convert the xml files into nicer json 
 - do dependency parsing and NER (see src/ and src/data\_helpers.py)
 - scripts to plot heatmaps (see vis/)
+- use example scripts to create spatially grounded semantic medieval KGs (see more-tools/)
 - and more, also see below
 
 We recommend peaking into the bash script full\_pipeline.sh to get an overview over some central steps.
@@ -126,4 +127,4 @@ We recommend peaking into the bash script full\_pipeline.sh to get an overview o
     - the traveling cost formula may be improved significantly or 
     - place prediction may be addressed with a compeltely different technique. 
     - it would be also nice to "type" the named entities (for example into monasteries, cities, persons, etc. since using spacy NER alone is too coarse grained for many purposes)
-    - or write analyses scripts that, e.g., compare emperors w.r.t. to their geo-spatial ruling habits
+- write analyses scripts that, e.g., compare emperors w.r.t. to their geo-spatial ruling habits or construct/analyze knowledge graphs
