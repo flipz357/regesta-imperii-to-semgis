@@ -1,4 +1,4 @@
-#Contains some example tools for statistical medieval analyses 
+# Example tools for statistical medieval analyses 
 
 Based on the output files of this project.
 
