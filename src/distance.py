@@ -14,11 +14,11 @@ def cost0(x, y):
    
     Returns:
         float: vincenty distance       
+        float: vincenty distance
     """
     di = vincenty(( x[0],x[1]),(y[0],y[1])).km#/div
     return di, di
 
-#0.5,1, 0.25
 def cost1(x, y, vd=None, coef = [None, None, 1, 1, 0.25]):
     """advanced cost to traveling from p=x to p'=y
 
@@ -30,8 +30,10 @@ def cost1(x, y, vd=None, coef = [None, None, 1, 1, 0.25]):
             , population count
             , avg. distance to helper places of p']
         vd: in case we have vincenty distance pre computed
+        coef (list): weights for y
     Returns:
-        float: traveling cost, pure vincenty distance
+        float: traveling cost
+        float: vincenty distance
     """
 
     levr = y[2] 
