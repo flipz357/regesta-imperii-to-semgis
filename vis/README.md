@@ -1,4 +1,4 @@
-#Contains some visualization helpers
+# Contains some visualization helpers
 
 ## Preparation
 
