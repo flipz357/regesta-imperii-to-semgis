@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 cd src
 
 runid=999999
