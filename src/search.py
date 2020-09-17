@@ -5,7 +5,7 @@ import logging
 from random import shuffle, choice
 from collections import Counter
 
-def safe_get(i,ls):
+def safe_get(i, ls):
     if len(ls) > i:
         return ls[i]
     if not ls:
@@ -13,15 +13,12 @@ def safe_get(i,ls):
     else:
         return ls[0]
 
-def safe_get_ls(i,ls):
-    if len(ls) > i:
-        return [ls[i]]
-    else:
-        return None
-
-def search(stations, C, queryobject
-        ,init_station="-1",init_memory=([0.0], [["99999999"]], ["99999999"])
-        ,places_in_regests = [[]]):
+def search(stations
+        , C
+        , queryobject
+        , init_station="-1"
+        , init_memory=([0.0], [["99999999"]], ["99999999"])
+        , places_in_regests = [[]]):
     """Search shortest route
     
     Given a list of place names travel stations and a Candidate data base 
@@ -126,7 +123,7 @@ def search(stations, C, queryobject
     return pathes[amin], cum_dist[amin]
 
 
-def _retrieve(name,G):
+def _retrieve(name, G):
     x = ""
     triples = [a for a in G.edges(data=True)]
     ls = []
@@ -142,7 +139,7 @@ def _retrieve(name,G):
     return ls[0][1]
 
 
-def maybe_only_one(queryobject,names,idx_charter_location,V):
+def maybe_only_one(queryobject, names, idx_charter_location, V):
     if len(names) > 1:
         return  [],0.0
     if len(names) == 1:
@@ -156,7 +153,7 @@ def maybe_only_one(queryobject,names,idx_charter_location,V):
         else:
             return [V[0][0]],0.0
 
-def gen_partitions(index,n=5): 
+def gen_partitions(index, n=5): 
     index = index
     shuffle(index)
     chunks = [index[i:i+n] for i in range(0, len(index), n)]
@@ -197,7 +194,7 @@ def topksteiner(names
     return Vnew
 
 
-def _pre_check_and_get_candidates(names,C,queryobject,idx_charter_location=[]):
+def _pre_check_and_get_candidates(names, C, queryobject, idx_charter_location=[]):
     if not names:
         return [] , [], 0.0
     #names = list(set(names))
@@ -250,7 +247,7 @@ def determine_with_steiner_tree(names
 
             for k,idx in enumerate(idxset):
                 for m,idx_other in enumerate(idxset_other):
-                    if not G.has_edge(idx,idx_other):
+                    if not G.has_edge(idx, idx_other):
                         
                         G.add_edge(idx,idx_other,weight=queryobject.cost(
                             names[i]
@@ -269,7 +266,7 @@ def determine_with_steiner_tree(names
     very_large_number = 10000.00
     for i,name in enumerate(names):
         for j,idx in enumerate(V[i]):
-            G.add_edge("name:"+name,idx,weight=very_large_number)
+            G.add_edge("name:"+name,idx, weight=very_large_number)
 
     logging.debug("approximating Steiner tree".format(nx.debug(G))) 
     res = steinertree.steiner_tree(G,["name:"+n for i,n in enumerate(names)])
@@ -289,20 +286,20 @@ def determine_with_steiner_tree(names
         res.remove_node("name:"+n)
     
     cum_weight = _get_cum_weight(sols
-            ,graph=None
-            ,query_object=queryobject
+            , graph=None
+            , query_object=queryobject
             , names=names
-            ,idx_charter_location=idx_charter_location)
+            , idx_charter_location=idx_charter_location)
 
     logging.debug("minimum cost: {}, result of hillclimbing: {}".format(
         cum_weight,sols))
     return sols,cum_weight
 
 def _get_cum_weight(idxs
-        ,graph=None
-        ,query_object=None
-        ,names=[]
-        ,idx_charter_location=[]):
+        , graph=None
+        , query_object=None
+        , names=[]
+        , idx_charter_location=[]):
     s=0.0
     if not query_object:
         for i,idx in enumerate(idxs):
@@ -324,16 +321,16 @@ def _get_cum_weight(idxs
     return s/(len(idxs)**2)
 
 
-def _graph_weight_delta(G,node):
-    return G.degree(node,weight="weight")
+def _graph_weight_delta(G, node):
+    return G.degree(node, weight="weight")
 
 
 
 def determine_with_stochastic_arrangement(names
-        ,C
-        ,queryobject
-        ,idx_charter_location=[]
-        ,iters=10):
+        , C
+        , queryobject
+        , idx_charter_location=[]
+        , iters=10):
     
     maybeV, maybesolution, maybecost = _pre_check_and_get_candidates(names
             ,C
@@ -400,12 +397,12 @@ def highest_pop_count(queryobject, names, C):
 
 
 def determine_with_hill_climber(names
-        ,C
-        ,queryobject
-        ,idx_charter_location=[]
-        ,iters=10
-        ,post_process_with_search=True
-        ,compute_cumulative_weight=False):
+        , C
+        , queryobject
+        , idx_charter_location=[]
+        , iters=10
+        , post_process_with_search=True
+        , compute_cumulative_weight=False):
     
     maybeV, maybesolution, maybecost = _pre_check_and_get_candidates(names
             ,C
@@ -481,10 +478,10 @@ def determine_with_hill_climber(names
     return sols,cum_weight
 
 def determine_with_random(names
-        ,C
-        ,queryobject
-        ,idx_charter_location=[]
-        ,iters=10):
+        , C
+        , queryobject
+        , idx_charter_location=[]
+        , iters=10):
     
     if not names:
         return [],0.0
@@ -500,15 +497,15 @@ def determine_with_random(names
             , names=names
             ,idx_charter_location=idx_charter_location)
     logging.debug("minimum cost: {}, result of hillclimbing: {}".format(
-        cum_weight,sols))
+        cum_weight, sols))
     
-    return sols,cum_weight
+    return sols, cum_weight
 
 def resolve_places_in_regests(namess
-        ,C
-        ,queryobject
-        ,charter_location_idxs=[]
-        ,method="hillclimber"):
+        , C
+        , queryobject
+        , charter_location_idxs=[]
+        , method="hillclimber"):
 
     helper_placess = [[safe_get(i,charter_location_idxs)] for i in range(len(namess))]
     out=[]
@@ -536,7 +533,7 @@ def resolve_places_in_regests(namess
             logging.info("{} regests processed (all placenames\
                     inside text resolved)".format(i))
         
-    return out,np.mean(cumcost)
+    return out, np.mean(cumcost)
 
 
 

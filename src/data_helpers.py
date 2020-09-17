@@ -15,7 +15,7 @@ from constants import UNKNOWN, NOLOC, RI_RAW_PATH, RI_RAW_NAMESPACE
 
 
 
-def clean_loc_string(loc,remove_lower=True):
+def clean_loc_string(loc, remove_lower=True):
     """Rudimentary cleaning of a place name
 
     Args:
@@ -29,39 +29,39 @@ def clean_loc_string(loc,remove_lower=True):
     if loc in NOLOC:
         return UNKNOWN
     if loc.endswith("?"):
-        loc = loc.replace("?","")
+        loc = loc.replace("?", "")
     if loc.startswith("["):
-        loc = loc.replace("[","")
-        loc = loc.replace("]","")
+        loc = loc.replace("[", "")
+        loc = loc.replace("]", "")
     elif loc.startswith("(") and loc.endswith(")"):
-        loc = loc.replace("(","")
-        loc = loc.replace(")","")
+        loc = loc.replace("(", "")
+        loc = loc.replace(")", "")
     elif loc.endswith("("):
-        loc = loc.replace("(","")
+        loc = loc.replace("(", "")
     if loc.endswith("(!)"):
-        loc = loc.replace("(!)","")
+        loc = loc.replace("(!)", "")
     if loc.startswith("bei "):
         loc = loc.replace("bei ", "")
     if loc.endswith("?"):
-        loc = loc.replace("?","")
+        loc = loc.replace("?", "")
     if loc.endswith("."):
-        loc = loc.replace(".","")
+        loc = loc.replace(".", "")
     if loc.startswith("vor "):
-        loc = loc.replace("vor ","")
+        loc = loc.replace("vor ", "")
     if loc.startswith("apud"):
-        loc = loc.replace("apud ","")
+        loc = loc.replace("apud ", "")
     if loc.startswith("aput"):
-        loc = loc.replace("aput ","")
+        loc = loc.replace("aput ", "")
     if loc.startswith("ad "):
-        loc = loc.replace("ad ","")
+        loc = loc.replace("ad ", "")
     if loc.startswith("ap. "):
-        loc = loc.replace("ap. ","")
+        loc = loc.replace("ap. ", "")
     if loc.startswith("in "):
-        loc = loc.replace("in ","")
+        loc = loc.replace("in ", "")
     if loc.startswith("civ "):
-        loc = loc.replace("civ ","")
+        loc = loc.replace("civ ", "")
     if loc.endswith(" civ"):
-        loc = loc.replace(" civ","")
+        loc = loc.replace(" civ", "")
     loc = loc.strip()
     if len(loc) < 3:
         return UNKNOWN
@@ -90,8 +90,13 @@ def regest_iter(path=RI_RAW_PATH):
             xmlfile = path+"/"+coll+"/"+key
             yield (coll,key,xmlfile)
 
-def regests_to_ls(path=RI_RAW_PATH, persname=None
-        ,locname=None,maxamount=-1,ids=[],specifickey=None,specificword=None):
+def regests_to_ls(path=RI_RAW_PATH
+        , persname=None
+        , locname=None
+        , maxamount=-1
+        , ids=[]
+        , specifickey=None
+        , specificword=None):
     
     """ Iterate over the structured RI xml data base 
     and convert it into a dictionary.
@@ -128,9 +133,7 @@ def regests_to_ls(path=RI_RAW_PATH, persname=None
         elif specifickey and specifickey in regpath:
             print(regpath,specifickey,"found")
         try:
-            #print(coll,key)
             dic = {}
-            #target_file = codecs.open(regpath,mode='r',encoding='utf-8')
             et = ET.parse(regpath)
             reg_komm = extract_divtexts(et,["regestentext","kommentar","incipit"])
             zeugen = extract_otherpersons(et,string="zeugen")
@@ -170,10 +173,7 @@ def regests_to_ls(path=RI_RAW_PATH, persname=None
         c+=1
         if c% 1000 == 0:
             print(c," done",len(regests))
-            #print(regests[-2:])
     return regests
-
-
 
 def extract_date(et):
     fromto= []
@@ -182,7 +182,7 @@ def extract_date(et):
         fromto.append(ch.attrib["to"])
     return fromto
 
-def extract_otherpersons(et,string="zeugen"):
+def extract_otherpersons(et, string="zeugen"):
     l=[]
     for ch in yield_divs(et):
         if string in ch.attrib:
@@ -199,7 +199,10 @@ def yield_divs(et):
     for div in et.iter(RI_RAW_NAMESPACE+"div"):
         yield div
 
-def extract_text(et,name,attr="",val=""):
+def extract_text(et
+        , name
+        , attr=""
+        , val=""):
     count = 0
     string=""
     for ch in et.iter(RI_RAW_NAMESPACE+name):
@@ -220,19 +223,18 @@ def extract_text(et,name,attr="",val=""):
 
 def clean_notes(string):
     while "<ns0:note " in string:
-        ss = string.split("<ns0:note ",1)
-        ss2 = string.split("</ns0:note>",1)
+        ss = string.split("<ns0:note ", 1)
+        ss2 = string.split("</ns0:note>", 1)
         try:
-            string=ss[0]+ss2[1]
+            string=ss[0] + ss2[1]
         except IndexError:
             print("malformed xml?",string)
             return string
     return string
 
-def extract_divtexts(et,attribs):
+def extract_divtexts(et, attribs):
     ls = []
     for div in yield_divs(et):
-        #print(ET.tostring(div).decode())
         for a in attribs:
             if div.attrib["type"] == a:
                 for text in div.iter(RI_RAW_NAMESPACE+"p"):
@@ -242,7 +244,7 @@ def extract_divtexts(et,attribs):
                     else:
                         string = BeautifulSoup(clean_notes(ET.tostring(text).decode()))
                         ls.append(string.text)
-                        ls.append(string.text.replace("\t",""))
+                        ls.append(string.text.replace("\t", ""))
     return ls
 
 
@@ -261,21 +263,21 @@ def writef(string,p):
 def regests2json(n, save_path="../ri-data/RI.json"):
     regests = regests_to_ls(maxamount=n)
     with open(save_path,"w") as f:
-        f.write(json.dumps(regests,indent=4,sort_keys=True))
+        f.write(json.dumps(regests, indent=4, sort_keys=True))
     return None
 
 def loadjson(p="resources/RI.json"):
     with open(p,"r") as f:
         return json.load(f)
 
-def maybe_associated_with_loc(ent,nlp):
+def maybe_associated_with_loc(ent, nlp):
     last_token = nlp([t for t in ent][-1].text).ents
     if last_token and last_token[0].label_ == "LOC" and len([t for t in ent]) > 1:
         return last_token[0].text
     else:
         return UNKNOWN
 
-def _extract_heads_from_tree(doc,token):
+def _extract_heads_from_tree(doc, token):
     pathrels = []
     maxiter=1000
     i = 0
@@ -340,7 +342,7 @@ def _get_ent_dict(label
             }
     return dic
 
-def _extract_nes(regesttext,nlp):  
+def _extract_nes(regesttext, nlp):  
     """preprocess and extracts named ents"""
 
     doc = nlp(regesttext.replace("v.", "von"))
@@ -348,7 +350,7 @@ def _extract_nes(regesttext,nlp):
     i=0
     for ent in doc.ents:
         label = ent.label_
-        pathrels = _extract_heads_from_tree(doc,ent.root)
+        pathrels = _extract_heads_from_tree(doc, ent.root)
         if label == "LOC":
             dic["ents"][i] = _get_ent_dict(label
                     , ent.text
@@ -363,7 +365,7 @@ def _extract_nes(regesttext,nlp):
         elif label == "PER":
             dic["ents"][i] = _get_ent_dict(label
                     , ent.text
-                    , maybe_associated_with_loc(ent,nlp)
+                    , maybe_associated_with_loc(ent, nlp)
                     , pathrels
                     , ent.start_char
                     , ent.end_char
@@ -396,7 +398,7 @@ def _maybe_convert_ent_dict_to_actual_format(dic):
                 break
     return None
 """
-def _clean_nes(jsondic,cf=lambda x:x):
+def _clean_nes(jsondic, cf=lambda x:x):
     """Cleans named entities with cleaning function
     """
     for k in jsondic:
@@ -461,7 +463,7 @@ def get_locs_vocab(entitydict):
                     v[ent["associated_with_loc"]]+=1
     return v
 
-def unknown_handling(input_names,strat = "last"):
+def unknown_handling(input_names, strat="last"):
     """Interpolates missing place names
     
     Args:

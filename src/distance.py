@@ -80,7 +80,7 @@ class QueryObject:
         self.save_dists = save_dists
 
 
-    def _vd(self,x,y):
+    def _vd(self, x, y):
         return cost0(x,y)[0]
     
     def _vd_by_idx(self,idx,idxother):
@@ -90,7 +90,7 @@ class QueryObject:
         ybar,xbar = self.geodata[idxother]["latitude"] ,self.geodata[idxother]["longitude"]
         return cost0( [y,x], [ybar, xbar])[0]
     
-    def _maybe_population(self,pid):
+    def _maybe_population(self, pid):
 
         pop = float(self.geodata[pid]["population"])
 
@@ -100,7 +100,7 @@ class QueryObject:
             return int(pop)
 
 
-    def _compute_feavec(self,pn,pid):
+    def _compute_feavec(self, pn, pid):
         
         #levenshtein distance
         names = self.geodata[pid]["alternatenames"]+[self.geodata[pid]["name"]]
@@ -119,7 +119,7 @@ class QueryObject:
         feavec = [float(x) for x in feavec]
         return feavec
 
-    def _maybe_inform_with_helper_places(self,placeid,feavec,helper_places=[]):
+    def _maybe_inform_with_helper_places(self, placeid, feavec, helper_places=[]):
         if not helper_places:
             return 0.0
         y,x = feavec[0],feavec[1]
@@ -140,7 +140,7 @@ class QueryObject:
 
 
 
-    def cost(self,placename1, placeid1, placename2, placeid2,helper_places=[]):
+    def cost(self, placename1, placeid1, placename2, placeid2,helper_places=[]):
         
         if not any([placename1, placeid1, placename2]):
             return self._maybe_inform_with_helper_places(placeid2,feavec2, helper_places)
@@ -167,20 +167,20 @@ class QueryObject:
             self.saver[key2] = feavec2
         
         #print(feavec1,feavec2) 
-        mh1 = self._maybe_inform_with_helper_places(placeid1,feavec1, helper_places)
-        mh2 = self._maybe_inform_with_helper_places(placeid2,feavec2, helper_places)
+        mh1 = self._maybe_inform_with_helper_places(placeid1, feavec1, helper_places)
+        mh2 = self._maybe_inform_with_helper_places(placeid2, feavec2, helper_places)
         
         
         
         feavec1bar = feavec1+[mh1]
         
         feavec2bar = feavec2+[mh2]
-        c,vdis = self._cost(feavec1bar,feavec2bar,vd=vd)
+        c,vdis = self._cost(feavec1bar, feavec2bar, vd=vd)
         if not vd and self.save_dists:
             self.saver[combi_key] = vdis
         return c
 
-def get_center(idxs,geodat):
+def get_center(idxs, geodat):
     ys = []
     xs = []
     for idx in idxs:

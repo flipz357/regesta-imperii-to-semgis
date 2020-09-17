@@ -20,7 +20,7 @@ def use_id_voter_simple_on_list(predicted_ids, used_names):
         if elm == UNKNOWN:
             predicted_ids[i] = UNKNOWN_ID
     clf = Voter(method="idvoter")
-    predicted_ids = clf.transform(predicted_ids,used_names)
+    predicted_ids = clf.transform(predicted_ids, used_names)
     for i in range(len(predicted_ids)):
         if predicted_ids[i] == UNKNOWN_ID:
             predicted_ids[i] = predicted_ids[i-1]
@@ -43,7 +43,7 @@ def use_dist_voter_simple_on_list(predicted_ids, used_names, geodat):
         if elm == UNKNOWN:
             predicted_ids[i] = UNKNOWN_ID
     clf = Voter(method="center",geodat=geodat)
-    predicted_ids = clf.transform(predicted_ids,used_names)
+    predicted_ids = clf.transform(predicted_ids, used_names)
     for i in range(len(predicted_ids)):
         if predicted_ids[i] == UNKNOWN_ID:
             predicted_ids[i] = predicted_ids[i-1]
@@ -51,32 +51,32 @@ def use_dist_voter_simple_on_list(predicted_ids, used_names, geodat):
 
 class Voter:
 
-    def __init__(self,method="idvoter",geodat=None):
+    def __init__(self, method="idvoter", geodat=None):
         self.method = method
         self.geodat = geodat
 
     def transform(self,Xids,Xnames):
-        return self._transform_xs(Xids,Xnames)
+        return self._transform_xs(Xids, Xnames)
     
     def _transform_xs(self,Xids,Xnames):
         if self.method == "idvoter":
-            cd =self.gen_mfs_from_xs(Xids,Xnames)
+            cd =self.gen_mfs_from_xs(Xids, Xnames)
 
         elif self.method == "center":
-            cd =self.gen_centered_from_xs(Xids,Xnames)
+            cd =self.gen_centered_from_xs(Xids, Xnames)
         out = []
         for i,name in enumerate(Xnames):
             out.append(cd[name])
         return out
     
-    def gen_mfs_from_xs(self,Xids,Xnames):
+    def gen_mfs_from_xs(self, Xids, Xnames):
         cd = defaultdict(list)
         for i,name in enumerate(Xnames):
             cd[name].append(Xids[i])
         cd = {name:Counter(xs).most_common(1)[0][0] for name,xs in cd.items()}
         return cd
     
-    def gen_centered_from_xs(self,Xids,Xnames):
+    def gen_centered_from_xs(self, Xids, Xnames):
         cd = defaultdict(list)
         for i,name in enumerate(Xnames):
             cd[name].append(Xids[i])

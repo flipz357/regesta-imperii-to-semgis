@@ -82,13 +82,13 @@ if __name__ == '__main__':
     if args.solve_jointly:
         #compute centers jointly
         spli = len(predids)
-        predids = use_id_voter_simple_on_list(predids+predids_ner,unames+unames_ner)
+        predids = use_id_voter_simple_on_list(predids + predids_ner, unames + unames_ner)
         predids_ner = list(predids[spli:])
         predids = predids[:spli]
     else:
         #or separately
         predids = use_id_voter_simple_on_list(predids,unames)
-        predids_ner = use_id_voter_simple_on_list(predids_ner,unames_ner)
+        predids_ner = use_id_voter_simple_on_list(predids_ner, unames_ner)
 
 
     #add output for itineraries
@@ -114,7 +114,7 @@ if __name__ == '__main__':
             c+=1
 
     #write outpus
-    with open(args.itinerary_file.replace(".json","")+"-_centers_added.json","w") as f:
-        f.write(json.dumps(its,sort_keys=True,indent=4))
-    with open(args.ner_place_file.replace(".json","")+"-_centers_added.json","w") as f:
-        f.write(json.dumps(ners,sort_keys=True,indent=4))
+    with open(args.itinerary_file.replace(".json","")+"-_centers_added.json", "w") as f:
+        f.write(json.dumps(its, sort_keys=True, indent=4))
+    with open(args.ner_place_file.replace(".json","")+"-_centers_added.json", "w") as f:
+        f.write(json.dumps(ners, sort_keys=True, indent=4))

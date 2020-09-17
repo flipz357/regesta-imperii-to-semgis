@@ -9,7 +9,7 @@ import Levenshtein
 from constants import UNKNOWN
 
 
-def dummy_info_dict(y,x,interpolidxs=[""]):
+def dummy_info_dict(y, x, interpolidxs=[""]):
     idxs = "_".join(list(sorted(interpolidxs)))
     colnames = ["geonameid"
             ,"name"
@@ -27,7 +27,7 @@ def dummy_info_dict(y,x,interpolidxs=[""]):
     return dic
 
 
-def read_geo_names(paths=["../geodata/allCountries.txt","../geodata/alternateNames.txt"],return_inverted_index= True,latlngminmax=[(31,58),(-9.5,38)]):
+def read_geo_names(paths=["../geodata/allCountries.txt","../geodata/alternateNames.txt"], return_inverted_index=True, latlngminmax=[(31,58),(-9.5,38)]):
     
     """    
     The main 'geoname' table has the following fields :
@@ -109,10 +109,14 @@ def read_geo_names(paths=["../geodata/allCountries.txt","../geodata/alternateNam
     return out,ii
         
 
-def id_to_info_dict(idx,geodata):
+def id_to_info_dict(idx, geodata):
     return {k:v for k,v in geodata[idx].items() if k != "alternatenames"}
 
-def maybe_convert_dissimilar_placenames_to_unknown(names,C,geodata,lr=None,exceptionfun=lambda x,y:False):
+def maybe_convert_dissimilar_placenames_to_unknown(names
+        , C
+        , geodata
+        , lr=None
+        , exceptionfun=lambda x,y:False):
     if not lr:
         return names
     other = []
@@ -142,7 +146,7 @@ def maybe_convert_dissimilar_placenames_to_unknown(names,C,geodata,lr=None,excep
             maxlr = max(lrs)
             maxi = np.argmax(lrs)
             if maxlr < lr and not any([exceptionfun(n,s) for s in candidate_names]):
-                logging.info("levenshtein ratio for {}:{}. Setting to unknown because < threshold {}".format(n,maxlr,lr))
+                logging.info("levenshtein ratio for {}:{}. Setting to unknown because < threshold {}".format(n, maxlr, lr))
                 names[i] = UNKNOWN+"({})".format(candidate_names[maxi])
     return names
         
@@ -155,7 +159,7 @@ def create_sets(s):
 def _build(idxs):
     return idxs
 
-def _build_candidates(name,ii=None,char_sets=None):    
+def _build_candidates(name, ii=None, char_sets=None):    
     
     if name in ii:
         #if we know this name return its candidates
@@ -188,7 +192,7 @@ def _build_candidates(name,ii=None,char_sets=None):
         b = time.time()
         return _build(list(set(found)))
 
-def build_candidates(uniq_locations,data=None,ii=None,multiprocessing=False):
+def build_candidates(uniq_locations, data=None, ii=None, multiprocessing=False):
     C = {}
     
     pool=None
@@ -215,7 +219,7 @@ def build_candidates(uniq_locations,data=None,ii=None,multiprocessing=False):
     return C
 
 
-def maybe_extend_candidates(C,ii,strategy=None):
+def maybe_extend_candidates(C, ii, strategy=None):
     if not strategy:
         return None
     for name in C:
