@@ -1,6 +1,6 @@
 # Creating a Semantic Medieval GIS from the Regesta Imperii
 
-This project contains the scripts to create a semantic medieval GIS from the [Regesta Imperii](www.regesta-imperii.de/en/home.html).
+This project contains the scripts to create a semantic medieval GIS from the [Regesta Imperii](https://regesta-imperii.de/en/home.html).
 
 ## Instructions
 
