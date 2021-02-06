@@ -131,6 +131,8 @@ We recommend peaking into the bash script `full_pipeline.sh` to get an overview 
 
 ### Citation
 
+Bib:
+
 ```
 @inproceedings{DBLP:conf/chr/Opitz20,
   author    = {Juri Opitz},
