@@ -151,8 +151,8 @@ We recommend peaking into the bash script `full_pipeline.sh` to get an overview 
   biburl    = {https://dblp.org/rec/conf/chr/Opitz20.bib},
   bibsource = {dblp computer science bibliography, https://dblp.org}
 }
+```
 
 APA:
 
 `Juri Opitz (2020). Automatic Creation of a Large-Scale Tempo-Spatial and Semantic Medieval European Information System. In Proceedings of the Workshop on Computational Humanities Research (CHR 2020), Amsterdam, The Netherlands, November 18-20, 2020 (pp. 397–419). CEUR-WS.org.`
-```
