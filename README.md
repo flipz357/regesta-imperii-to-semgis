@@ -101,24 +101,24 @@ Alternatively, you can try the whole process with toy data first
 
 ## Other
 
-## Fully processed automatic annotations
+### Fully processed automatic annotations
 
 You can download the 
 1. [place predictions for charter origins](https://drive.google.com/file/d/1EJbM_F79PWlhyTlMe5BVnG-9NcrZWjYD/view?usp=sharing) and the 
 2. [place predictions for named entities occuring in the charter texts, along with some NLP annotations](https://drive.google.com/file/d/1vCxMowifdm_V81zmXl4UbLJBNqWjsAlD/view?usp=sharing).
 
-## what else can you do with this project?
+### what else can you do with this project?
 
 By using the individual building blocks of this project, you can do specific things: For example, 
 - you can get up-to-date RI-snapshots in xml (see ri-crawler), scripts to convert the xml files into nicer json 
-- do dependency parsing and NER (see src/ and src/data\_helpers.py)
+- do dependency parsing and NER (see src/ and `src/data_helpers.py`)
 - scripts to plot heatmaps (see vis/)
 - use example scripts to create spatially grounded semantic medieval KGs (see more-tools/)
 - and more, also see below
 
-We recommend peaking into the bash script full\_pipeline.sh to get an overview over some central steps.
+We recommend peaking into the bash script `full_pipeline.sh` to get an overview over some central steps.
 
-## what can be done to improve this project?
+### what can be done to improve this project?
 
 - On a technical level, we would like to make the code run faster (parallelization?). 
 - On a prediction performance level we would like to increase the accuracy of the resolutions. 
@@ -128,3 +128,31 @@ We recommend peaking into the bash script full\_pipeline.sh to get an overview o
     - place prediction may be addressed with a compeltely different technique. 
     - it would be also nice to "type" the named entities (for example into monasteries, cities, persons, etc. since using spacy NER alone is too coarse grained for many purposes)
 - write analyses scripts that, e.g., compare emperors w.r.t. to their geo-spatial ruling habits or construct/analyze knowledge graphs
+
+### Citation
+
+```
+@inproceedings{DBLP:conf/chr/Opitz20,
+  author    = {Juri Opitz},
+  editor    = {Folgert Karsdorp and
+               Barbara McGillivray and
+               Adina Nerghes and
+               Melvin Wevers},
+  title     = {Automatic Creation of a Large-Scale Tempo-Spatial and Semantic Medieval
+               European Information System},
+  booktitle = {Proceedings of the Workshop on Computational Humanities Research {(CHR}
+               2020), Amsterdam, The Netherlands, November 18-20, 2020},
+  series    = {{CEUR} Workshop Proceedings},
+  volume    = {2723},
+  pages     = {397--419},
+  publisher = {CEUR-WS.org},
+  year      = {2020},
+  url       = {http://ceur-ws.org/Vol-2723/long12.pdf},
+  biburl    = {https://dblp.org/rec/conf/chr/Opitz20.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+
+APA:
+
+`Juri Opitz (2020). Automatic Creation of a Large-Scale Tempo-Spatial and Semantic Medieval European Information System. In Proceedings of the Workshop on Computational Humanities Research (CHR 2020), Amsterdam, The Netherlands, November 18-20, 2020 (pp. 397–419). CEUR-WS.org.`
+```
