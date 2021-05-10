@@ -414,6 +414,7 @@ def determine_with_hill_climber(names
     else:
         V = maybeV
     logging.debug("instating candidate graph for {} names".format(len(names)))
+    logging.debug("name stats: {}, {}".format(names, [len(C[name]) for name in names]))
     
     
     

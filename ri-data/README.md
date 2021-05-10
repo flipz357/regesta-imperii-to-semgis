@@ -1,1 +1,2 @@
-The file "..ortsliste..." contains manual resolutions of places found in the regesta imperii, as resolved by two student assistents. In our project, we use these for evaluation.
+- The file "..ortsliste..." contains manual resolutions of places found in the regesta imperii, as resolved by two student assistents. In our project, we use these for evaluation.
+- The file "...entity...types" contains abbreviations and entity types/titles. One per line, or, if not in canonical, followed by whitespace and canonical form.

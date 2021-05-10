@@ -204,9 +204,9 @@ def build_candidates(uniq_locations, data=None, ii=None, multiprocessing=False):
 
     char_sets = {k:create_sets(k) for k in uniq_locations}
     if not pool:
-        for i,name in enumerate(uniq_locations):
+        for i, name in enumerate(uniq_locations):
             logging.info("searching candidates for {}...".format(name))
-            candidates = _build_candidates(name,ii=ii,char_sets=char_sets)
+            candidates = _build_candidates(name, ii=ii, char_sets=char_sets)
             logging.info("candidates found: {}".format(candidates))
             C[name] = candidates
             if i % 10 == 0:
@@ -219,7 +219,7 @@ def build_candidates(uniq_locations, data=None, ii=None, multiprocessing=False):
     return C
 
 
-def maybe_extend_candidates(C, ii, strategy=None):
+def maybe_extend_candidates(C, ii, strategy=None, entity_types={}):
     if not strategy:
         return None
     for name in C:
@@ -228,6 +228,9 @@ def maybe_extend_candidates(C, ii, strategy=None):
         if " " in name:
             spl = name.split()
             for tok in spl:
+                if name in entity_types:
+                    #prevent collecting for only "Burg", "Kloster", etc
+                    continue
                 if tok in ii:
                     for cand in ii[tok]:
                         if cand not in C[name]:

@@ -63,6 +63,10 @@ def get_args():
     parser.add_argument("-RI_as_json_path", nargs="?", 
             default="../ri-data/RI.json", type=str, 
             help="path to load all regests")
+    
+    parser.add_argument("-entity_types", nargs="?", 
+            default="../ri-data/entity_types.txt", type=str, 
+            help="path to entity type list")
 
     parser.add_argument("-ner_method", nargs="?",default="spacy", type=str, 
             help="spacy or stanza")
@@ -87,10 +91,14 @@ if __name__ == '__main__':
 
     if args.dummy_run:
         regests  = regests[10300:10500]
-    #regests = regests[:10000]
+     
+
+    entity_types = dh.load_entity_types(args.entity_types)
+
     #extract named entities associated with places from text
     text_nes = dh.extract_nes(regests, check_if_saved=args.fresh_run==False
-            ,clean=dh.clean_loc_string,save_path=args.entity_file_path,method=args.ner_method)
+            , clean=dh.clean_loc_string, save_path=args.entity_file_path, method=args.ner_method
+            , entity_types=entity_types)
 
     text_nes_as_list = [text_nes[key] for key in [reg["uri"] for reg in regests]]
     text_names = []
@@ -107,15 +115,14 @@ if __name__ == '__main__':
     additional_locs = [j for i in text_names for j in i]
 
 
+    #clean and get unique place names
+    names = [dh.clean_loc_string(regest["location"]) for regest in regests] 
+    uniq_locations = list(set(names)) + list(set(additional_locs))
+    uniq_locations = uniq_locations
+    print(list(sorted(uniq_locations, key = len, reverse=True)))
 
     #load geodata
-    geonames,ii = gh.read_geo_names()
-
-    #clean and get unique place names
-    names = [dh.clean_loc_string(regest["location"]) for regest in regests]
-    uniq_locations = list(set(names))+list(set(additional_locs))
-    uniq_locations=uniq_locations
-
+    geonames, ii = gh.read_geo_names()
 
     CANDIDATE_EXISTS=os.path.exists(args.place_candidate_file_path)
 
@@ -156,7 +163,7 @@ if __name__ == '__main__':
                         c_stats[1],c_stats[2],c_stats[3]))
 
     if args.simple_candidate_extension:
-        gh.maybe_extend_candidates(C,ii,strategy="single-token-match")
+        gh.maybe_extend_candidates(C, ii, strategy="single-token-match", entity_types=entity_types)
         c_stats = statistics.candidate_stats(C)
         logging.info("candidate statistics\n\
                      unique place names: {}\n\
@@ -172,22 +179,24 @@ if __name__ == '__main__':
 
 
 
-
     #if place name strings deviate too much, set them to UNKNWON
 
     exceptionfun = lambda x,y: any([tok for tok in x.split() if tok == y])
+    
     input_names = gh.maybe_convert_dissimilar_placenames_to_unknown(names
-            ,C,geonames,lr=0.5, exceptionfun=exceptionfun)
+            , C, geonames, lr=0.5, exceptionfun=exceptionfun)
+    
+    
     text_names = [gh.maybe_convert_dissimilar_placenames_to_unknown(ns
-        , C, geonames,lr=0.5,exceptionfun=exceptionfun) for ns in text_names]
-
+        , C, geonames, lr=0.5, exceptionfun=exceptionfun) for ns in text_names]
+    
 
     #handle UNKNOWN names
     #in itinerary: default: set to last known name
-    names_not_unknown = dh.unknown_handling(input_names,strat=args.unknown_strat)
+    names_not_unknown = dh.unknown_handling(input_names, strat=args.unknown_strat)
 
     #in text: default: remove and interpolate later
-    names_not_unknown_text = [list(set(dh.unknown_handling(tn,strat="remove"))) 
+    names_not_unknown_text = [list(set(dh.unknown_handling(tn, strat="remove"))) 
             for tn in text_names]
 
 
@@ -200,6 +209,8 @@ if __name__ == '__main__':
     for iteration in range(args.iterations):
         logging.info("starting {}. global iteration".format(iteration))
         
+        path = []
+
         
         #resolve itinerary
         path, cum_dist = search(names_not_unknown
@@ -214,7 +225,7 @@ if __name__ == '__main__':
         logging.info("solving emperor routes finished; cumulative_distance {}".format(cum_dist))
         path = path[1:]
         path = [C[name][path[i]] for i,name in enumerate(names_not_unknown)]
-
+        
         
         
         places_in_regests, avg_cost = resolve_places_in_regests(

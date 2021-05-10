@@ -1,0 +1,154 @@
+Kg. König
+gr. Graf
+Hz. Herzog
+ksl. kaiserlich
+Ks. Kaiser
+Gf. Graf
+kgl. königlich
+erzb. Erzbischof
+kg. König
+Gr. Graf
+Dr. Doktor
+Hrz. Herzog
+Eb. Erzbischof
+Gff. Graf
+Bf. Bischof
+Hzg. Herzog
+Mgf. Markgraf
+hz. Herzog
+MG. Markgraf
+Kff. Kurfürst
+Kf. Kurfürst
+EB. Erzbischof
+Pfgf. Pfalzgrafen
+Mkgr. Markgraf
+Erzd. Erzdekan
+BF. Bischof
+Lkr. Landkreis
+Hzz. Herzog
+Pg. Pfalzgraf
+pfgr. Pfalzgraf
+GF. Graf
+Gft. Grafschaft
+Akad. Akademie
+Ldgf. Landgraf
+Ehz. Erzherzog
+Kgg. König
+Kgin. Königin
+mkgr. Markgraf
+Mgff. Markgraf
+gf. Graf
+Hzge. Herzog
+Bggf. Burggraf
+Erzb. Erzbischof
+Ak. Akademie
+Gfn. Gräfin
+Hrzz. Herzog
+erzbb. Erzbischof
+hzg. Herzog
+pfgf. Pfalzgraf
+Pfgr. Pfalzgraf
+Bff. Bischof
+brggr. Burggraf
+Hzt. Herzogtum
+gfn. Gräfin
+Gn. Gräfin
+Ebb. Erzbischof
+Grf. Graf
+Stadt
+Erzbischof
+Papst
+Bischof
+Kloster
+Abt
+Kirche
+Grafen Graf
+Gesandten Gesandter
+Gesandte Gesandter
+Gesandter Gesandter
+Bürger
+Mark
+Graf
+Erben Erbe
+Lehen
+Burg
+Sohn
+Klosters Kloster
+Ritter
+Bruder
+Propst
+Städte Stadt
+Bischofs Bischof
+Räte Rat
+Bürgern Bürger
+Erzbischofs Erzbischof
+Fürsten Fürst
+Gericht
+Ehg Erzherzog
+Schloß
+Besitzungen Besitzung
+Raitkammer
+Konvent
+Brüdern Bruder
+Bischöfe Bischof
+Stift
+Bürgermeister
+Fsten Fürst
+Untertanen Untertan
+Grafschaft
+Markgrafen Markgraf
+Richter
+Hauptmann
+Städten Stadt
+Kirchen Kirche
+Diener
+Ebf Erzbischof
+Eidgenossen Eidgenosse
+Markgraf
+Amt
+Kanoniker
+Boten Bote
+Pfleger
+Vogt
+Dorf
+Gfen Graf
+Mgf Markgraf
+Gütern Gut
+Kardinal
+Kammer
+Dekan
+Kgin Königin
+Bürgermeistern Bürgermeister
+Abtes Abt
+Gemahlin
+Äbtissin
+Diözese
+Gesandtschaft
+Räten Rat
+Tochter
+Knechte Knecht
+Knecht
+Bistum
+Bistums Bistum
+Kanzler
+Pfalzgrafen Pfalzgraf
+Pfalzgraf
+Prior
+Amtmann
+Legaten Legat
+Kleriker
+Getreuen Getreuer
+Ort
+Kaiserin
+Vogtei
+Gebiet
+Priester
+Gemeinde
+Kopist
+Erzbischöfe Erzbischof
+Abtei
+Mönch
+Benediktiner
+Mönche Mönch
+Franziskaner
+Burgen Burg

@@ -63,8 +63,6 @@ def clean_loc_string(loc, remove_lower=True):
     if loc.endswith(" civ"):
         loc = loc.replace(" civ", "")
     loc = loc.strip()
-    if len(loc) < 3:
-        return UNKNOWN
     if remove_lower:
         string=loc.split()
         upperonly = " ".join([s for s in string if s[0].isupper()])
@@ -73,7 +71,9 @@ def clean_loc_string(loc, remove_lower=True):
         else:
             loc = UNKNOWN
     if loc in NOLOC:
-        loc= UNKNOWN
+        loc = UNKNOWN
+    if len(loc) < 3:
+        loc = UNKNOWN
     return loc
 
 
@@ -271,10 +271,14 @@ def loadjson(p="resources/RI.json"):
         return json.load(f)
 
 def maybe_associated_with_loc(ent, nlp):
-    last_token = nlp([t for t in ent][-1].text).ents
+    tokens = [t for t in ent]
+    last_token = nlp(tokens[-1].text).ents
     if last_token and last_token[0].label_ == "LOC" and len([t for t in ent]) > 1:
         return last_token[0].text
     else:
+        for i, t in enumerate(tokens):
+            if t.text in ["von", "zu", "de"] and i < len(tokens) - 1:
+                return tokens[i+1].text
         return UNKNOWN
 
 def _extract_heads_from_tree(doc, token):
@@ -329,28 +333,55 @@ def _get_ent_dict(label
         , heads, chstart
         , chend
         , tokstart
-        , tokend):
+        , tokend
+        , entity_type):
 
-    dic = {"label":label
-            , "text":text
-            , "associated_with_loc":associated_with_loc
-            , "heads":heads
+    dic = {"label": label
+            , "text": text
+            , "associated_with_loc": associated_with_loc
+            , "heads": heads
             , "chstart": chstart
             , "chend": chend
             , "tokstart": tokstart
             , "tokend": tokend
+            , "predicted_entity_type": entity_type
             }
     return dic
 
-def _extract_nes(regesttext, nlp):  
-    """preprocess and extracts named ents"""
+def _maybe_get_ent_type(entity, doc, entity_types, last_entity_type):
+    text = entity.text
+    #predicted entity type
+    pred_type = ""
+    for e in entity_types:
+        if e in text:
+            pred_type = entity_types[e]
+    if not pred_type:
+        if entity.start > 0:
+            tok_before = doc[entity.start - 1]
+            for e in entity_types:
+                if e in tok_before.text:
+                    pred_type = entity_types[e]
+            if tok_before.text in ["u.", "und"] and not pred_type:
+                pred_type = last_entity_type
+    return pred_type
 
-    doc = nlp(regesttext.replace("v.", "von"))
+
+def _extract_nes(regesttext, nlp, entity_types):  
+    """preprocess and extracts named ents"""
+    regesttext = regesttext.replace("v.", "von")
+    for key in entity_types:
+        if key.endswith("."):
+            #it's an abbreviated type --> spell out
+            regesttext = regesttext.replace(key, entity_types[key])
+    doc = nlp(regesttext)
     dic = {"serialization of preprocessed doc": _serialize_doc(doc), "ents": {}}
     i=0
+    last_entity_type = ""
     for ent in doc.ents:
         label = ent.label_
         pathrels = _extract_heads_from_tree(doc, ent.root)
+        entity_type = _maybe_get_ent_type(ent, doc, entity_types, last_entity_type)
+        last_entity_type = entity_type
         if label == "LOC":
             dic["ents"][i] = _get_ent_dict(label
                     , ent.text
@@ -360,8 +391,10 @@ def _extract_nes(regesttext, nlp):
                     , ent.end_char
                     , ent.start
                     , ent.end
+                    , entity_type
                     )
             i+=1
+
         elif label == "PER":
             dic["ents"][i] = _get_ent_dict(label
                     , ent.text
@@ -370,7 +403,8 @@ def _extract_nes(regesttext, nlp):
                     , ent.start_char
                     , ent.end_char
                     , ent.start
-                    , ent.end)
+                    , ent.end
+                    , entity_type)
             i+=1
     return dic
 
@@ -409,7 +443,27 @@ def _clean_nes(jsondic, cf=lambda x:x):
                 jsondic[k]["ents"][k2]["text"] = cf(jsondic[k]["ents"][k2]["text"])
     return None
 
-def extract_nes(jsonregests,check_if_saved=True,clean=lambda x:x,save_path="resources/ENTITIES.json",method="spacy"):
+def load_entity_types(p):
+    etype_dict = {} 
+    if not p:
+        return {}
+    with open(p, "r") as f:
+        for line in f.read().split("\n"):
+            line = line.strip()
+            e1 = ""
+            e2 = ""
+            if " " in line:
+                e1 = line.split()[0]
+                e2 = line.split()[1]
+            else:
+                e1 = line
+                e2 = line
+            etype_dict[e1] = e2
+    etype_dict.pop("")
+    return etype_dict
+
+def extract_nes(jsonregests, check_if_saved=True, clean=lambda x:x
+        , save_path="resources/ENTITIES.json", method="spacy", entity_types={}):
     """NLP processing for entity extraction
     
     1. Processes regest texts with spacy/stanza
@@ -426,10 +480,10 @@ def extract_nes(jsonregests,check_if_saved=True,clean=lambda x:x,save_path="reso
             return dat
     
     if method == "spacy":
-        logging.info("loading spacy md")
-        nlp = spacy.load('de_core_news_md')
+        logging.info("loading spacy de_core_news_lg")
+        nlp = spacy.load('de_core_news_lg')
 
-        logging.info("spacy md loaded")
+        logging.info("spacy model loaded")
     elif method == "stanza":
         logging.info("loading stanza pipeline")
         import stanza
@@ -441,14 +495,13 @@ def extract_nes(jsonregests,check_if_saved=True,clean=lambda x:x,save_path="reso
     out = {}
     for i,jr in enumerate(jsonregests):
         key = jr["uri"]
-        out[key] = _extract_nes(jr["regestentext_clean"],nlp) 
+        out[key] = _extract_nes(jr["regestentext_clean"], nlp, entity_types=entity_types) 
         #print(jr["regestentext_clean"])
-        #print(out[key])
         if i % 1000 == 0:
-            logging.info("{}/{} regests spacy processed".format(i,len(jsonregests)))
+            logging.info("{}/{} regests spacy processed".format(i, len(jsonregests)))
+    _clean_nes(out,clean)
     with open(save_path,"w") as f:
         f.write(json.dumps(out))
-    _clean_nes(out,clean)
     return out
 
 def get_locs_vocab(entitydict):

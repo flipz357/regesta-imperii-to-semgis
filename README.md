@@ -35,7 +35,7 @@ pip install -r requirements.txt
 And download an NLP model for German:
 
 ```
-python -m spacy download de_core_news_md-2.2.5 --direct
+python -m spacy download de_core_news_lg
 ```
 
 ### Pipelines
