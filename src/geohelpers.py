@@ -12,11 +12,11 @@ from constants import UNKNOWN
 def dummy_info_dict(y, x, interpolidxs=[""]):
     idxs = "_".join(list(sorted(interpolidxs)))
     colnames = ["geonameid"
-            ,"name"
-            ,"asciiname"
-            ,"latitude"
-            ,"longitude"
-            ,"population"]
+            , "name"
+            , "asciiname"
+            , "latitude"
+            , "longitude"
+            , "population"]
     dic = {}
     dic["geonameid"] = "INTERPOLATION_"+idxs
     dic["name"] = "INTERPOLATION_NONAME"
@@ -52,13 +52,13 @@ def read_geo_names(paths=["../geodata/allCountries.txt","../geodata/alternateNam
     timezone          : the iana timezone id (see file timeZone.txt) varchar(40)
     modification date : date of last modification in yyyy-MM-dd format
     """ 
-    colnames = [(0,"geonameid")
-            ,(1,"name")
-            ,(2,"asciiname")
-            ,(3,"alternatenames")
-            ,(4,"latitude")
-            ,(5,"longitude")
-            ,(14,"population")]
+    colnames = [(0, "geonameid")
+            ,(1, "name")
+            ,(2, "asciiname")
+            ,(3, "alternatenames")
+            ,(4, "latitude")
+            ,(5, "longitude")
+            ,(14, "population")]
             
     
     out = {}
@@ -112,6 +112,7 @@ def read_geo_names(paths=["../geodata/allCountries.txt","../geodata/alternateNam
 def id_to_info_dict(idx, geodata):
     return {k:v for k,v in geodata[idx].items() if k != "alternatenames"}
 
+
 def maybe_convert_dissimilar_placenames_to_unknown(names
         , C
         , geodata
@@ -151,13 +152,13 @@ def maybe_convert_dissimilar_placenames_to_unknown(names
     return names
         
 
-
 def create_sets(s):
     return [set(list(x)) for x in s.split()]
 
 
 def _build(idxs):
     return idxs
+
 
 def _build_candidates(name, ii=None, char_sets=None):    
     
@@ -178,11 +179,11 @@ def _build_candidates(name, ii=None, char_sets=None):
         dists = []
         md = 1000
         for othername in othernames:
-            lendiff = abs(len(name)-len(othername))
+            lendiff = abs(len(name) - len(othername))
             if lendiff > md:
                 dists.append(1000)
             else:
-                d=Levenshtein.distance(name,othername)
+                d=Levenshtein.distance(name, othername)
                 dists.append(d)
                 if d < md:
                     md = d
@@ -198,7 +199,7 @@ def build_candidates(uniq_locations, data=None, ii=None, multiprocessing=False):
     pool=None
     if multiprocessing:
         pccount = mp.cpu_count() // 1.2
-        pccount=int(pccount)
+        pccount = int(pccount)
         pool = mp.Pool(max(1,pccount))
         print(pccount)
 
@@ -210,12 +211,12 @@ def build_candidates(uniq_locations, data=None, ii=None, multiprocessing=False):
             logging.info("candidates found: {}".format(candidates))
             C[name] = candidates
             if i % 10 == 0:
-                logging.info("{}/{} regest names processed, candidates created".format(i,len(uniq_locations)))
+                logging.info("{}/{} regest names processed, candidates created".format(i, len(uniq_locations)))
             if i % 1000 == 0:
-                logging.critical("{}/{} regest names processed, candidates created".format(i,len(uniq_locations)))
+                logging.critical("{}/{} regest names processed, candidates created".format(i, len(uniq_locations)))
     else:
         #DO not use crashes memory at the moment
-        candidatess=pool.map(lambda name: _build_candidates(name,ii=ii,char_sets=char_sets), uniq_locations)
+        candidatess=pool.map(lambda name: _build_candidates(name, ii=ii, char_sets=char_sets), uniq_locations)
     return C
 
 

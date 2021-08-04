@@ -14,7 +14,6 @@ import logging
 from constants import UNKNOWN, NOLOC, RI_RAW_PATH, RI_RAW_NAMESPACE
 
 
-
 def clean_loc_string(loc, remove_lower=True):
     """Rudimentary cleaning of a place name
 
@@ -82,7 +81,6 @@ def save_obj(obj,path):
 
 def load_obj(path):
     return _pickle.load(open(path,"rb"))
-
 
 def regest_iter(path=RI_RAW_PATH):
     for coll in os.listdir(path):
@@ -484,6 +482,7 @@ def extract_nes(jsonregests, check_if_saved=True, clean=lambda x:x
         nlp = spacy.load('de_core_news_lg')
 
         logging.info("spacy model loaded")
+    
     elif method == "stanza":
         logging.info("loading stanza pipeline")
         import stanza
@@ -492,6 +491,7 @@ def extract_nes(jsonregests, check_if_saved=True, clean=lambda x:x
         snlp = stanza.Pipeline(lang="de")
         nlp = StanzaLanguage(snlp)
         logging.info("stanza pipeline loaded")
+    
     out = {}
     for i,jr in enumerate(jsonregests):
         key = jr["uri"]
@@ -500,8 +500,10 @@ def extract_nes(jsonregests, check_if_saved=True, clean=lambda x:x
         if i % 1000 == 0:
             logging.info("{}/{} regests spacy processed".format(i, len(jsonregests)))
     _clean_nes(out,clean)
+    
     with open(save_path,"w") as f:
         f.write(json.dumps(out))
+    
     return out
 
 def get_locs_vocab(entitydict):

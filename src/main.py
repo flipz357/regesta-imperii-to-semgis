@@ -97,8 +97,8 @@ if __name__ == '__main__':
 
     #extract named entities associated with places from text
     text_nes = dh.extract_nes(regests, check_if_saved=args.fresh_run==False
-            , clean=dh.clean_loc_string, save_path=args.entity_file_path, method=args.ner_method
-            , entity_types=entity_types)
+            , clean=dh.clean_loc_string, save_path=args.entity_file_path
+            , method=args.ner_method, entity_types=entity_types)
 
     text_nes_as_list = [text_nes[key] for key in [reg["uri"] for reg in regests]]
     text_names = []
@@ -147,11 +147,8 @@ if __name__ == '__main__':
         logging.info("retrieving retrieved, stroing to {}".format(
             args.place_candidate_file_path))
 
-
-
         with open(args.place_candidate_file_path,"w") as f:
             f.write(json.dumps(C,indent=4,sort_keys=True))
-
 
     c_stats = statistics.candidate_stats(C)
     logging.info("candidate statistics\n\
@@ -163,7 +160,8 @@ if __name__ == '__main__':
                         c_stats[1],c_stats[2],c_stats[3]))
 
     if args.simple_candidate_extension:
-        gh.maybe_extend_candidates(C, ii, strategy="single-token-match", entity_types=entity_types)
+        gh.maybe_extend_candidates(C, ii
+                , strategy="single-token-match", entity_types=entity_types)
         c_stats = statistics.candidate_stats(C)
         logging.info("candidate statistics\n\
                      unique place names: {}\n\
@@ -200,10 +198,8 @@ if __name__ == '__main__':
             for tn in text_names]
 
 
-
     places_in_regests = []
     path = []
-
 
     #start bootstrapping
     for iteration in range(args.iterations):
@@ -222,22 +218,22 @@ if __name__ == '__main__':
                 ,init_station=names[0]
                 ,places_in_regests=places_in_regests
                 )
-        logging.info("solving emperor routes finished; cumulative_distance {}".format(cum_dist))
+        logging.info("solving emperor routes finished; \
+                cumulative_distance {}".format(cum_dist))
         path = path[1:]
         path = [C[name][path[i]] for i,name in enumerate(names_not_unknown)]
         
-        
-        
         places_in_regests, avg_cost = resolve_places_in_regests(
                 names_not_unknown_text,C,QO,path,method=args.text_place_solver)
-        logging.info("solving places in text finished; method={}, avg cost={}".format(args.text_place_solver,avg_cost))
+        logging.info("solving places in text finished; method={}, \
+                avg cost={}".format(args.text_place_solver,avg_cost))
 
-
-
-    assert len(path) == len(names_not_unknown) and len(places_in_regests) == len(path)
+    ## checks and creating final output files
+    assert len(path) == len(names_not_unknown)
+    assert len(places_in_regests) == len(path)
+    
     place_predictions = {}
     text_place_predictions = {}
-
     for i in range(len(path)):
         uri = regests[i]["uri"]
         place_predictions[uri] = {"used name":input_names[i]
@@ -245,27 +241,35 @@ if __name__ == '__main__':
         text_place_predictions[uri] = {}
         for idx in text_nes[uri]["ents"]:
             if "associated_with_loc" in text_nes[uri]["ents"][idx]:
-                tmploc = dh.clean_loc_string(text_nes[uri]["ents"][idx]["associated_with_loc"])
+                tmploc = dh.clean_loc_string(
+                        text_nes[uri]["ents"][idx]["associated_with_loc"])
             else:
                 tmploc = dh.clean_loc_string(text_nes[uri]["ents"][idx]["text"])
             if tmploc in names_not_unknown_text[i]:
                 k = places_in_regests[i][names_not_unknown_text[i].index(tmploc)]
-                text_nes[uri]["ents"][idx]["prediction"] = gh.id_to_info_dict(k,geonames)
+                text_nes[uri]["ents"][idx]["prediction"] = gh.id_to_info_dict(k
+                        , geonames)
                 text_nes[uri]["ents"][idx]["used_name"] = tmploc
             else:
                 text_nes[uri]["ents"][idx]["prediction"] = UNKNOWN
                 text_nes[uri]["ents"][idx]["used_name"] = tmploc
 
         if args.interpolate_missing_text_place_predictions:
-            allidxs_in_regest_places = [text_nes[uri]["ents"][idx]["prediction"]["geonameid"] for idx in text_nes[uri]["ents"] 
-                    if text_nes[uri]["ents"][idx]["prediction"] != UNKNOWN]
+            
+            allidxs_in_regest_places = [
+                    text_nes[uri]["ents"][idx]["prediction"]["geonameid"] 
+                    for idx in text_nes[uri]["ents"] 
+                    if text_nes[uri]["ents"][idx]["prediction"] != UNKNOWN
+                    ]
+            
             if not allidxs_in_regest_places:
                 continue
             else:
-                lat,lng = ds.get_center(allidxs_in_regest_places,geonames)
+                lat, lng = ds.get_center(allidxs_in_regest_places, geonames)
                 for idx in text_nes[uri]["ents"]:
                     if text_nes[uri]["ents"][idx]["prediction"] == UNKNOWN:
-                        text_nes[uri]["ents"][idx]["prediction"] = gh.dummy_info_dict(lat,lng,allidxs_in_regest_places)
+                        dummy = gh.dummy_info_dict(lat, lng, allidxs_in_regest_places)
+                        text_nes[uri]["ents"][idx]["prediction"] = dummy
 
         if i % 10 == 0:
             logging.debug("place_predictions saved {}/{}".format(i,len(path)))
@@ -276,6 +280,7 @@ if __name__ == '__main__':
                 "predictions/charter_locations_{}.json".format(args.runid),
                 "predictions/NE_locations_{}.json".format(args.runid)))
 
+    # write files
     with open("predictions/charter_locations_{}.json".format(args.runid),"w") as f:
         f.write(json.dumps(place_predictions,indent=4))
     with open("predictions/NE_locations_{}.json".format(args.runid),"w") as f:

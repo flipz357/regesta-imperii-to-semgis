@@ -26,6 +26,7 @@ def use_id_voter_simple_on_list(predicted_ids, used_names):
             predicted_ids[i] = predicted_ids[i-1]
     return predicted_ids
 
+
 def use_dist_voter_simple_on_list(predicted_ids, used_names, geodat):
     """ chose most centered id for each name.
 
@@ -42,12 +43,13 @@ def use_dist_voter_simple_on_list(predicted_ids, used_names, geodat):
     for i,elm in enumerate(used_names):
         if elm == UNKNOWN:
             predicted_ids[i] = UNKNOWN_ID
-    clf = Voter(method="center",geodat=geodat)
+    clf = Voter(method="center", geodat=geodat)
     predicted_ids = clf.transform(predicted_ids, used_names)
     for i in range(len(predicted_ids)):
         if predicted_ids[i] == UNKNOWN_ID:
             predicted_ids[i] = predicted_ids[i-1]
     return predicted_ids
+
 
 class Voter:
 
@@ -73,7 +75,7 @@ class Voter:
         cd = defaultdict(list)
         for i,name in enumerate(Xnames):
             cd[name].append(Xids[i])
-        cd = {name:Counter(xs).most_common(1)[0][0] for name,xs in cd.items()}
+        cd = {name:Counter(xs).most_common(1)[0][0] for name, xs in cd.items()}
         return cd
     
     def gen_centered_from_xs(self, Xids, Xnames):
@@ -90,12 +92,12 @@ class Voter:
                     latx.append(float(data[0]))
                     lngx.append(float(data[1]))
 
-        for i,name in enumerate(cd):
+        for i, name in enumerate(cd):
             tmpd = 10000000.00
             tmp = None
             if name == UNKNOWN:
                 continue
-            for j,idx in enumerate(cd[name]):
+            for j, idx in enumerate(cd[name]):
                 data = self.geodat.get(idx)
                 s = 0.0
                 for k, idx2 in enumerate(cd[name]):
@@ -104,8 +106,10 @@ class Voter:
                         continue
                     if not data or not data2:
                         continue
-                    d=cosine([float(x) for x in list(data)],[float(x) for x in list(data2)])
-                    s+=d
+                    d = cosine(
+                            [float(x) for x in list(data)]
+                            , [float(x) for x in list(data2)])
+                    s += d
                 if s < tmpd:
                     tmpd = s
                     tmp = idx
@@ -115,7 +119,4 @@ class Voter:
                 cd[name] = UNKNOWN_ID
         return cd
     
-
-
-
 
