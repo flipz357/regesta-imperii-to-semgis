@@ -9,7 +9,7 @@ This project contains the scripts to create a semantic medieval GIS from the [Re
 Let's grab the geo names data base:
 
 ```
-./quick_download_geo_names.sh
+./download_geo_names.sh
 ```
 
 #### Recommended additional preparations
@@ -47,16 +47,10 @@ This is a short cut that only runs the resolution based on some files which we a
 It uses the RI snapshot which we used (with a simple downlad, i.e. no time-consuming crawling is required).
 It also uses a ready-made place-name candidate map and the NLP pre-processed files (only a download is required, see below).
 
-To get the RI snapshot which we used already in nice json format (together with the result of NER and Dependency parsing):
+To get the RI snapshot which we used already in nice json format (together with the result of NER and Dependency parsing) and to get the result of NER and Dependency parsing and candidate extractions:
 
 ```
-./quick_download_ri_preprocessed.sh
-```
-
-to get the result of NER and Dependency parsing and candidate extractions
-
-```
-./quick_download_intermediate_files.sh
+./download_intermediate_files.sh
 ```
 
 run place resolutions based on downloaded preprocessed files
