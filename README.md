@@ -97,9 +97,9 @@ Alternatively, you can try the whole process with toy data first
 
 ### Fully processed automatic annotations
 
-You can download the 
-1. [place predictions for charter origins](https://drive.google.com/file/d/1EJbM_F79PWlhyTlMe5BVnG-9NcrZWjYD/view?usp=sharing) and the 
-2. [place predictions for named entities occuring in the charter texts, along with some NLP annotations](https://drive.google.com/file/d/1vCxMowifdm_V81zmXl4UbLJBNqWjsAlD/view?usp=sharing).
+You can download this [zip file](https://www.cl.uni-heidelberg.de/~opitz/data/rigeo/final_outputs.zip), in which you find
+1. place predictions for charter origins
+2. place predictions for named entities occuring in the charter texts and (new) **their titles** (queen, bishop, monk, ...), along with some NLP annotations
 
 ### what else can you do with this project?
 
