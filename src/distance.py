@@ -5,6 +5,7 @@ import geohelpers as gh
 import math
 import numpy as np
 
+
 def cost0(x, y):
     """simplest cost fo traveling from p=x to p'=y
 
@@ -18,6 +19,7 @@ def cost0(x, y):
     """
     di = vincenty(( x[0],x[1]),(y[0],y[1])).km#/div
     return di, di
+
 
 def cost1(x, y, vd=None, coef = [None, None, 1, 1, 0.25]):
     """advanced cost to traveling from p=x to p'=y
@@ -54,10 +56,11 @@ def cost1(x, y, vd=None, coef = [None, None, 1, 1, 0.25]):
     
     return numer/denom, vd
 
+
 class QueryObject:
 
-    def __init__(self,geodata, costfun=cost0
-            ,save_feas=True, save_dists=False):
+    def __init__(self, geodata, costfun=cost0
+            , save_feas=True, save_dists=False):
         """ Inits object for distance/cost queries
 
         Args:
@@ -78,7 +81,7 @@ class QueryObject:
         self.saver= {}
         self.save_feas = save_feas
         self.save_dists = save_dists
-
+        return None
 
     def _vd(self, x, y):
         return cost0(x,y)[0]
@@ -198,10 +201,9 @@ class QueryObject:
         mh1 = self._maybe_inform_with_helper_places(placeid1, feavec1, helper_places)
         mh2 = self._maybe_inform_with_helper_places(placeid2, feavec2, helper_places)
         
-        feavec1bar = feavec1+[mh1]
-        
+        feavec1bar = feavec1+[mh1]        
         feavec2bar = feavec2+[mh2]
-        c,vdis = self._cost(feavec1bar, feavec2bar, vd=vd)
+        c, vdis = self._cost(feavec1bar, feavec2bar, vd=vd)
         if not vd and self.save_dists:
             self.saver[combi_key] = vdis
         return c
