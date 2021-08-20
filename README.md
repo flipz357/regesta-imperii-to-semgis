@@ -99,7 +99,7 @@ Alternatively, you can try the whole process with toy data first
 
 You can download this [zip file](https://www.cl.uni-heidelberg.de/~opitz/data/rigeo/final_outputs.zip), in which you find
 1. place predictions for charter origins
-2. place predictions for named entities occuring in the charter texts and (new) **their titles** (queen, bishop, monk, ...), along with some NLP annotations
+2. place predictions for named entities occuring in the charter texts and (*new in Version 0.2*) **their titles** (queen, bishop, monk, ...), along with some NLP annotations
 
 ### what else can you do with this project?
 
