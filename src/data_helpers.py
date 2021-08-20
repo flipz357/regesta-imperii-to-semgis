@@ -77,16 +77,19 @@ def clean_loc_string(loc, remove_lower=True):
 
 
 def save_obj(obj,path):
-    _pickle.dump(obj,open(path,"wb"))
+    _pickle.dump(obj, open(path, "wb"))
+
 
 def load_obj(path):
-    return _pickle.load(open(path,"rb"))
+    return _pickle.load(open(path, "rb"))
+
 
 def regest_iter(path=RI_RAW_PATH):
     for coll in os.listdir(path):
-        for key in os.listdir(path+"/"+coll):
-            xmlfile = path+"/"+coll+"/"+key
-            yield (coll,key,xmlfile)
+        for key in os.listdir(path + "/" + coll):
+            xmlfile = path + "/" + coll + "/" + key
+            yield (coll, key, xmlfile)
+
 
 def regests_to_ls(path=RI_RAW_PATH
         , persname=None
@@ -129,15 +132,15 @@ def regests_to_ls(path=RI_RAW_PATH
             c+=1
             continue
         elif specifickey and specifickey in regpath:
-            print(regpath,specifickey,"found")
+            print(regpath, specifickey, "found")
         try:
             dic = {}
             et = ET.parse(regpath)
-            reg_komm = extract_divtexts(et,["regestentext","kommentar","incipit"])
-            zeugen = extract_otherpersons(et,string="zeugen")
-            unterschr = extract_otherpersons(et,string="unterschriften")
-            loc = extract_text(et,"origPlace")
-            iss = extract_text(et,"persName", "role","issuer")
+            reg_komm = extract_divtexts(et, ["regestentext", "kommentar", "incipit"])
+            zeugen = extract_otherpersons(et, string="zeugen")
+            unterschr = extract_otherpersons(et, string="unterschriften")
+            loc = extract_text(et, "origPlace")
+            iss = extract_text(et, "persName", "role","issuer")
             if persname and persname != iss:
                 continue
             if locname and locname != loc:
@@ -151,7 +154,7 @@ def regests_to_ls(path=RI_RAW_PATH
                     continue    
                 else:
                     c+=1
-                    print(key+"\t"+iss+"\t"+loc+"\t"+date[0]+"\t"+dic["regestentext_clean"])
+                    print(key + "\t" + iss + "\t" + loc + "\t" + date[0] + "\t" + dic["regestentext_clean"])
                     print(c)
                     continue
             dic["kommentar_raw"] = reg_komm[2]
@@ -173,12 +176,14 @@ def regests_to_ls(path=RI_RAW_PATH
             print(c," done",len(regests))
     return regests
 
+
 def extract_date(et):
     fromto= []
     for ch in et.iter(RI_RAW_NAMESPACE+"origDate"):
         fromto.append(ch.attrib["from"])
         fromto.append(ch.attrib["to"])
     return fromto
+
 
 def extract_otherpersons(et, string="zeugen"):
     l=[]
@@ -196,6 +201,7 @@ def extract_otherpersons(et, string="zeugen"):
 def yield_divs(et):
     for div in et.iter(RI_RAW_NAMESPACE+"div"):
         yield div
+
 
 def extract_text(et
         , name
@@ -218,7 +224,6 @@ def extract_text(et
     return string
 
 
-
 def clean_notes(string):
     while "<ns0:note " in string:
         ss = string.split("<ns0:note ", 1)
@@ -226,16 +231,17 @@ def clean_notes(string):
         try:
             string=ss[0] + ss2[1]
         except IndexError:
-            print("malformed xml?",string)
+            print("malformed xml?", string)
             return string
     return string
+
 
 def extract_divtexts(et, attribs):
     ls = []
     for div in yield_divs(et):
         for a in attribs:
             if div.attrib["type"] == a:
-                for text in div.iter(RI_RAW_NAMESPACE+"p"):
+                for text in div.iter(RI_RAW_NAMESPACE + "p"):
                     if not True:
                         ls.append("None")
                         ls.append("None")
@@ -264,9 +270,11 @@ def regests2json(n, save_path="../ri-data/RI.json"):
         f.write(json.dumps(regests, indent=4, sort_keys=True))
     return None
 
+
 def loadjson(p="resources/RI.json"):
     with open(p,"r") as f:
         return json.load(f)
+
 
 def maybe_associated_with_loc(ent, nlp):
     tokens = [t for t in ent]
@@ -279,6 +287,7 @@ def maybe_associated_with_loc(ent, nlp):
                 return tokens[i+1].text
         return UNKNOWN
 
+
 def _extract_heads_from_tree(doc, token):
     pathrels = []
     maxiter=1000
@@ -290,6 +299,7 @@ def _extract_heads_from_tree(doc, token):
         i+=1
     return pathrels
 
+
 def _serialize_doc(doc):
     """Serializes preprocessed document"""
     tok = ""
@@ -297,16 +307,16 @@ def _serialize_doc(doc):
     pos = ""
     dep = ""
     charoff = ""
-    head=""
-    tag=""
+    head= ""
+    tag= ""
     for i,token in enumerate(doc):
-        tok += token.text.strip()+" "
-        lemma += token.lemma_.strip()+" "
-        pos += token.pos_.strip()+" "
-        dep += token.dep_.strip()+" "
-        head += str(token.head.i)+" "
-        tag += token.tag_+" "
-        charoff += str(token.idx)+" "
+        tok += token.text.strip() + " "
+        lemma += token.lemma_.strip() + " "
+        pos += token.pos_.strip() + " "
+        dep += token.dep_.strip() + " "
+        head += str(token.head.i) + " "
+        tag += token.tag_ + " "
+        charoff += str(token.idx) + " "
     tok = tok.strip()
     lemma = lemma.strip()
     pos = pos.strip()
@@ -320,7 +330,7 @@ def _serialize_doc(doc):
             ,"#dep:::"  +dep
             ,"#head:::" +head
             ,"#tag:::"   +tag
-            ,"#charoffset:::"+charoff]
+            ,"#charoffset:::" +charoff]
     l = "\n".join(l)
     return l
 
@@ -345,6 +355,7 @@ def _get_ent_dict(label
             , "predicted_entity_type": entity_type
             }
     return dic
+
 
 def _maybe_get_ent_type(entity, doc, entity_types, last_entity_type):
     text = entity.text
@@ -430,6 +441,7 @@ def _maybe_convert_ent_dict_to_actual_format(dic):
                 break
     return None
 """
+
 def _clean_nes(jsondic, cf=lambda x:x):
     """Cleans named entities with cleaning function
     """
@@ -440,6 +452,7 @@ def _clean_nes(jsondic, cf=lambda x:x):
             elif jsondic[k]["ents"][k2]["label"] == "LOC":
                 jsondic[k]["ents"][k2]["text"] = cf(jsondic[k]["ents"][k2]["text"])
     return None
+
 
 def load_entity_types(p):
     etype_dict = {} 
@@ -459,6 +472,7 @@ def load_entity_types(p):
             etype_dict[e1] = e2
     etype_dict.pop("")
     return etype_dict
+
 
 def extract_nes(jsonregests, check_if_saved=True, clean=lambda x:x
         , save_path="resources/ENTITIES.json", method="spacy", entity_types={}):
@@ -506,6 +520,7 @@ def extract_nes(jsonregests, check_if_saved=True, clean=lambda x:x
     
     return out
 
+
 def get_locs_vocab(entitydict):
     v = defaultdict(int)
     for key in entitydict:
@@ -517,6 +532,7 @@ def get_locs_vocab(entitydict):
                 if ent["associated_with_loc"] != UNKNOWN:
                     v[ent["associated_with_loc"]]+=1
     return v
+
 
 def unknown_handling(input_names, strat="last"):
     """Interpolates missing place names
@@ -539,6 +555,7 @@ def unknown_handling(input_names, strat="last"):
             if UNKNOWN not in n:
                 names_not_unknown.append(n)
     return names_not_unknown
+
 
 
 def load_manual(p):
@@ -568,6 +585,7 @@ def load_manual(p):
     print("could load",len(lines)-not_loaded
             , "from the", len(lines),"gold name-place resolutions")
     return dic
+
 
 def load_manual_geonamesid(p):
     """load manual csv file that contains mapping place names to geonameids

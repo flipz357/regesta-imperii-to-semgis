@@ -387,6 +387,7 @@ def determine_with_stochastic_arrangement(names
         cum_weight, sols))
     return sols, cum_weight
 
+
 def highest_pop_count(queryobject, names, C):
     hc = 0
     nameidx = 0
@@ -435,13 +436,11 @@ def determine_with_hill_climber(names
                 continue
             else:
                 for c in C[names[i]]:
-                    
                     d=queryobject.cost(tmpnames[-1]
                             ,tmpidx[-1]
                             ,names[i]
                             ,c
                             ,idx_charter_location)
-
                     if d < tmpw:
                         tmpw = d
                         tmpi = i
@@ -516,8 +515,10 @@ def resolve_places_in_regests(namess
         method = determine_with_stochastic_arrangement
     elif method == "random":
         method = determine_with_random
+
     cumcost = []
     for i, names in enumerate(namess): 
+        
         res,cost = method(names
                 , C
                 , queryobject

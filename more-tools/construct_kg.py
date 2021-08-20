@@ -37,7 +37,7 @@ def create_graph(RI, it_dic, ent_dic, min_ent_count = 2, emp = "Friedrich II."):
         if reg["issuer"] != emp:
             continue
         for entidx in ent_dic[uri]["ents"]:
-            ent_count[ent_dic[uri]["ents"][entidx]["text"]]+=1
+            ent_count[ent_dic[uri]["ents"][entidx]["text"]] += 1
     done_ents = {}
 
     #we iterate over the regests

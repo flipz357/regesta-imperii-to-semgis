@@ -2,7 +2,7 @@ import data_helpers as dh
 import json
 from collections import defaultdict, Counter
 import argparse
-from voter import Voter,use_id_voter_simple_on_list, use_dist_voter_simple_on_list
+from voter import Voter, use_id_voter_simple_on_list, use_dist_voter_simple_on_list
 from constants import UNKNOWN, UNKNOWN_ID
 
 

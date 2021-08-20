@@ -193,6 +193,7 @@ def _build_candidates(name, ii=None, char_sets=None):
         b = time.time()
         return _build(list(set(found)))
 
+
 def build_candidates(uniq_locations, data=None, ii=None, multiprocessing=False):
     C = {}
     

@@ -62,6 +62,7 @@ def add2dict(dic, uri, lat="NA", lng="NA", name="NA", is_confident="NA"):
 
     return None
 
+
 def create_gold_uri_loc_mapping_by_coordinates(ridict, manualdict):
     gold = {}
     man = manualdict
@@ -108,8 +109,6 @@ def create_gold_uri_loc_mapping_by_geoname_id(ridict,manualdict):
         gold[uri]["given name"] = e
         gold[uri]["date"] = ridict[uri]["date"][0]
     return gold
-
-
 
 
 def get_data(pred_uri_loc_mapping
@@ -249,9 +248,7 @@ def get_data(pred_uri_loc_mapping
                 else:
                     yt =  this_preds[uri]["ents"][idx]["prediction-center"]["latitude"]
                     xt =  this_preds[uri]["ents"][idx]["prediction-center"]["longitude"]
-                
-
-                
+                                
                 this.append([float(yt),float(xt)])
                 gold.append([yg,xg])
                 
@@ -264,6 +261,7 @@ def get_data(pred_uri_loc_mapping
                 years.append(year)
         return this, gold, years
 
+
 def evaluate(pred_uri_loc_mapping, gold_uri_loc_mapping, level = "event"):
     this, gold, years = get_data(pred_uri_loc_mapping
             , gold_uri_loc_mapping
@@ -274,15 +272,15 @@ def evaluate(pred_uri_loc_mapping, gold_uri_loc_mapping, level = "event"):
     print(list(sorted(list(set(years)))))
     if not level == "macro":
         if args.times:
-            datedict = {"century":[years[i] for i in dates]
-                    , "km delta":[km_deltas_this[i] for i in dates]}
+            datedict = {"century": [years[i] for i in dates]
+                    , "km delta": [km_deltas_this[i] for i in dates]}
             
             s=0
             
             string = "{} & {} & {} ".format("decade"
                     ,"median km delta this"
                     ,"cumulative median km delta this")
-            outd = {"time":[],"delta":[], "delta-cumulative":[]} 
+            outd = {"time": [],"delta": [], "delta-cumulative":[]} 
             for y in sorted(list(set(datedict["century"]))):
                 dt = [datedict["km delta"][i] for i in range(len(datedict["km delta"])) 
                         if datedict["century"][i] == y]
@@ -307,16 +305,15 @@ def evaluate(pred_uri_loc_mapping, gold_uri_loc_mapping, level = "event"):
         km_deltas_thist = [vincenty(thist[i],goldt[i]).km for i in range(len(goldt))]
         datest = [i for i in range(len(yearst)) if yearst[i]  > 700 and yearst[i] < 1525]
         if args.times:
-            datedict = {"century":[yearst[i] for i in datest]
-                    , "km delta":[km_deltas_thist[i] for i in datest]}
+            datedict = {"century": [yearst[i] for i in datest]
+                    , "km delta": [km_deltas_thist[i] for i in datest]}
             
             s=0
-            
             string = "{} & {} & {} ".format("decade"
                     ,"median km delta"
                     ,"median km delta this")
             #outd = {"time":[],"delta":[], "delta-cumulative":[]} 
-            outd = {"time":[],"delta":[], "delta-cumulative":[]} 
+            outd = {"time": [], "delta":[], "delta-cumulative": []} 
             for y in sorted(list(set(datedict["century"]))):
                 dt = [datedict["km delta"][i] for i in range(len(datedict["km delta"])) 
                         if datedict["century"][i] == y]
@@ -335,18 +332,15 @@ def evaluate(pred_uri_loc_mapping, gold_uri_loc_mapping, level = "event"):
     mean_delta_this = np.mean(km_deltas_this)
     
     def p(num,x):
-        return round(num*100,1)
+        return round(num*100, 1)
+    
     print(len(this),len(gold)) 
     print("latitude pearsor", pearsonr([x[0] for x in this],[x[0] for x in gold]))    
     print("longitude pearsor", pearsonr([x[1] for x in this],[x[1] for x in gold]))
     print("latitude rmse", np.sqrt(mean_squared_error([x[0] for x in this],[x[0] for x in gold])))
     print("longitude rmse", np.sqrt(mean_squared_error([x[1] for x in this],[x[1] for x in gold])))
-    
-    
-    
     print("mean delta km",mean_delta_this)
 
-    
     print("percentile deviations:")
     for k in range(50,100,5):
         print("\t{}\t{}".format(k,np.percentile(km_deltas_this,k)))
@@ -416,7 +410,7 @@ def evaluate_text_places(pred_uri_loc_mapping, gold_uri_loc_mapping, level = "ev
     mean_delta_this = np.mean(km_deltas_this)
     
     def p(num,x):
-        return round(num*100,1)
+        return round(num*100, 1)
     
     print("latitude pearsor", pearsonr([x[0] for x in this],[x[0] for x in gold]))
     print("longitude pearsor", pearsonr([x[1] for x in this],[x[1] for x in gold]))
@@ -440,12 +434,8 @@ def evaluate_text_places(pred_uri_loc_mapping, gold_uri_loc_mapping, level = "ev
     print("# < 100km-event",len([x for x in km_deltas_this if x < 100]))
     print("lower better")
     print("# > 250km",len([x for x in km_deltas_this if x > 250]))
-    
     print("# > 750km",len([x for x in km_deltas_this if x > 750]))
-    
-    
     print("# > 1000km",len([x for x in km_deltas_this if x > 1000]))
-    
     print("# > 2500km",len([x for x in km_deltas_this if x > 2500]))
     
     
@@ -456,7 +446,7 @@ if __name__ == "__main__":
     with open(args.itinerary_file) as f:
         pred_uri_loc_mapping = json.load(f)
     #man = load_manual(args.gold_csv_path)
-    gold_uri_loc_mapping = create_gold_uri_loc_mapping(RI, args.gold_csv_path,args.human_anno_type)
+    gold_uri_loc_mapping = create_gold_uri_loc_mapping(RI, args.gold_csv_path, args.human_anno_type)
     with open(args.itinerary_file) as f:
         pred_uri_loc_papping = json.load(f) 
     if "charter_locations" in args.itinerary_file:
