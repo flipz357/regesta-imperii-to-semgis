@@ -2,9 +2,9 @@
 
 This project contains the scripts to create a semantic medieval knowledge graph with geographical information. It is constructed from summaries of medieval charters and event descriptions contained in the [Regesta Imperii](http://regesta-imperii.de/en/home.html). More detailed description can be found [here](http://www.ceur-ws.org/Vol-2723/long12.pdf).
 
-**V0.1** Intitial release
+**V0.1**: Intitial release, **prediction of places for medieval place names** in charters and charter origins, extracting **relations between medieval entities** (e.g., x bestows y to z, x confirms y to z) with dependency parsing.
 
-**V0.2** Predicted titles of named entities (counts, monks, castles, city, ....)
+**V0.2**: Predicted **titles of named entities** (counts, monks, castles, city, ....)
 
 ## Instructions
 
