@@ -30,7 +30,7 @@ and activate it
 source ri-env/bin/activate
 ```
 
-And then we install necessary python modules:
+And then we install necessary python modules (Note, Levenshtein distance uses gcc, if not already available, it needs to be installed, on Ubuntu: `sudo apt install build-essential`):
 
 ```
 pip install -r requirements.txt
