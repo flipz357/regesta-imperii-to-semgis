@@ -124,7 +124,7 @@ We recommend peaking into the bash script `full_pipeline.sh` to get an overview 
     - the candidate coverage could be increased, by using additional geo data bases. 
     - the traveling cost formula may be improved significantly or 
     - place prediction may be addressed with a compeltely different technique. 
-    - it would be also nice to "type" the named entities (for example into monasteries, cities, persons, etc. since using spacy NER alone is too coarse grained for many purposes)
+    - ~~it would be also nice to "type" the named entities (for example into monasteries, cities, persons, etc. since using spacy NER alone is too coarse grained for many purposes)~~ (done in **v0.2**)
 - write analyses scripts that, e.g., compare emperors w.r.t. to their geo-spatial ruling habits or construct/analyze knowledge graphs
 
 ### Citation
