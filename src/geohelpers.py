@@ -168,7 +168,7 @@ def _build_candidates(name, ii=None):
         if lendiff > md:
             dists.append(1000)
         else:
-            d=Levenshtein.distance(name, othername)
+            d = Levenshtein.distance(name, othername)
             dists.append(d)
             if d < md:
                 md = d
