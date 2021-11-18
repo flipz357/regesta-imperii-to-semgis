@@ -1,24 +1,13 @@
-import gc
-import sys
 import logging
 import numpy as np
-import multiprocess as mp
-import functools
-import time
 import Levenshtein
 from constants import UNKNOWN
 
 
 def dummy_info_dict(y, x, interpolidxs=[""]):
     idxs = "_".join(list(sorted(interpolidxs)))
-    colnames = ["geonameid"
-            , "name"
-            , "asciiname"
-            , "latitude"
-            , "longitude"
-            , "population"]
     dic = {}
-    dic["geonameid"] = "INTERPOLATION_"+idxs
+    dic["geonameid"] = "INTERPOLATION_" + idxs
     dic["name"] = "INTERPOLATION_NONAME"
     dic["asciiname"] = "INTERPOLATION_NONAME"
     dic["latitude"] = y
@@ -117,11 +106,13 @@ def maybe_convert_dissimilar_placenames_to_unknown(names
         , C
         , geodata
         , lr=None
-        , exceptionfun=lambda x,y:False):
+        , exceptionfun=lambda x, y:False):
+    
     if not lr:
         return names
-    other = []
-    for i,n in enumerate(names):
+    
+    for i, n in enumerate(names):
+        
         if n != UNKNOWN:
             candidate_idxs = C.get(n)
             if not candidate_idxs:
@@ -141,12 +132,12 @@ def maybe_convert_dissimilar_placenames_to_unknown(names
                 continue
 
             altnames = [j for i in altn for j in i]
-            candidate_names+=altnames
-            lrs = [Levenshtein.ratio(n,s) for s in candidate_names]
+            candidate_names += altnames
+            lrs = [Levenshtein.ratio(n, s) for s in candidate_names]
             
             maxlr = max(lrs)
             maxi = np.argmax(lrs)
-            if maxlr < lr and not any([exceptionfun(n,s) for s in candidate_names]):
+            if maxlr < lr and not any([exceptionfun(n, s) for s in candidate_names]):
                 logging.info("levenshtein ratio for {}:{}. Setting to unknown because < threshold {}".format(n, maxlr, lr))
                 names[i] = UNKNOWN+"({})".format(candidate_names[maxi])
     return names
@@ -160,81 +151,67 @@ def _build(idxs):
     return idxs
 
 
-def _build_candidates(name, ii=None, char_sets=None):    
+def _build_candidates(name, ii=None):    
     
     if name in ii:
         #if we know this name return its candidates
-        a = time.time()
         x = _build(ii[name])
-        b = time.time()
         return x
-    else:
-        #else look up similar names
-        l=len(name)
-        found = []
-        a = time.time()
-        b = time.time()
-        a = time.time()
-        othernames = [othername for othername in ii]
-        dists = []
-        md = 1000
-        for othername in othernames:
-            lendiff = abs(len(name) - len(othername))
-            if lendiff > md:
-                dists.append(1000)
-            else:
-                d=Levenshtein.distance(name, othername)
-                dists.append(d)
-                if d < md:
-                    md = d
-        for i,d in enumerate(dists):
-            if d == md:
-                found+=ii[othernames[i]]
-        b = time.time()
-        return _build(list(set(found)))
-
-
-def build_candidates(uniq_locations, data=None, ii=None, multiprocessing=False):
-    C = {}
     
-    pool=None
-    if multiprocessing:
-        pccount = mp.cpu_count() // 1.2
-        pccount = int(pccount)
-        pool = mp.Pool(max(1,pccount))
-        print(pccount)
+    #else look up similar names
+    found = []
+    othernames = [othername for othername in ii]
+    dists = []
+    md = 1000
+    for othername in othernames:
+        lendiff = abs(len(name) - len(othername))
+        if lendiff > md:
+            dists.append(1000)
+        else:
+            d=Levenshtein.distance(name, othername)
+            dists.append(d)
+            if d < md:
+                md = d
+    for i, d in enumerate(dists):
+        if d == md:
+            found += ii[othernames[i]]
+    return _build(list(set(found)))
 
-    char_sets = {k:create_sets(k) for k in uniq_locations}
-    if not pool:
-        for i, name in enumerate(uniq_locations):
-            logging.info("searching candidates for {}...".format(name))
-            candidates = _build_candidates(name, ii=ii, char_sets=char_sets)
-            logging.info("candidates found: {}".format(candidates))
-            C[name] = candidates
-            if i % 10 == 0:
-                logging.info("{}/{} regest names processed, candidates created".format(i, len(uniq_locations)))
-            if i % 1000 == 0:
-                logging.critical("{}/{} regest names processed, candidates created".format(i, len(uniq_locations)))
-    else:
-        #DO not use crashes memory at the moment
-        candidatess=pool.map(lambda name: _build_candidates(name, ii=ii, char_sets=char_sets), uniq_locations)
+
+def build_candidates(uniq_locations, ii=None):
+    
+    C = {}
+     
+    for i, name in enumerate(uniq_locations):
+        logging.info("searching candidates for {}...".format(name))
+        candidates = _build_candidates(name, ii=ii)
+        logging.info("candidates found: {}".format(candidates))
+        C[name] = candidates
+        if i % 10 == 0:
+            logging.info("{}/{} regest names processed, candidates created".format(i, len(uniq_locations)))
+        if i % 1000 == 0:
+            logging.critical("{}/{} regest names processed, candidates created".format(i, len(uniq_locations)))
+    
     return C
 
 
 def maybe_extend_candidates(C, ii, strategy=None, entity_types={}):
+    
     if not strategy:
         return None
+    
     for name in C:
         if name in ii:
             continue
         if " " in name:
             spl = name.split()
             for tok in spl:
-                if name in entity_types:
+                if tok in entity_types:
                     #prevent collecting for only "Burg", "Kloster", etc
                     continue
                 if tok in ii:
                     for cand in ii[tok]:
                         if cand not in C[name]:
                             C[name].append(cand)
+    
     return None
