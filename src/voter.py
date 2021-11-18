@@ -1,6 +1,4 @@
 from collections import Counter,defaultdict
-from geopy.distance import vincenty
-import numpy as np
 from scipy.spatial.distance import cosine
 from constants import UNKNOWN, UNKNOWN_ID
 
@@ -67,7 +65,7 @@ class Voter:
         elif self.method == "center":
             cd =self.gen_centered_from_xs(Xids, Xnames)
         out = []
-        for i,name in enumerate(Xnames):
+        for name in Xnames:
             out.append(cd[name])
         return out
     
@@ -82,7 +80,7 @@ class Voter:
         cd = defaultdict(list)
         for i,name in enumerate(Xnames):
             cd[name].append(Xids[i])
-        centers = {}
+        
         for name in cd:
             latx=[]
             lngx=[]

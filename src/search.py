@@ -18,7 +18,6 @@ def safe_get(i, ls):
 def search(stations
         , C
         , queryobject
-        , init_station="-1"
         , init_memory=([0.0], [["99999999"]], ["99999999"])
         , places_in_regests = [[]]):
     """Search shortest route
@@ -46,10 +45,8 @@ def search(stations
 
     """
 
-    out = []
     memory={}
     memory[-1] = init_memory
-    last_station = init_station
     
     #we iterate over the stations
     for i,station in enumerate(stations):
@@ -113,14 +110,13 @@ def search(stations
         memory[i] = (tmpcumdists, tmppathes, tmpcoordinates_last)
         memory.pop(i-1)
         logging.debug("memory updated")
-        last_station = station
         if i % 10 == 0:
             logging.debug("placenames resolved: {}/{}".format(i, len(stations)))
         if (i + 1) % 100 == 0:
             logging.info("placenames resolved: {}/{}".format(i+1, len(stations)))
 
     logging.debug("finished... returning shortest path")
-    cum_dist, pathes, coordinates_last = memory[len(stations)-1]
+    cum_dist, pathes, _ = memory[len(stations)-1]
     amin = np.argmin(cum_dist)
     return pathes[amin], cum_dist[amin]
 
@@ -142,8 +138,10 @@ def _retrieve(name, G):
 
 
 def maybe_only_one(queryobject, names, idx_charter_location, V):
+    
     if len(names) > 1:
-        return  [],0.0
+        return  [], 0.0
+    
     if len(names) == 1:
         if idx_charter_location:
 
@@ -152,8 +150,9 @@ def maybe_only_one(queryobject, names, idx_charter_location, V):
 
             amin = np.argmin(result)
             return [V[0][amin]], result[amin]
-        else:
-            return [V[0][0]], 0.0
+        return [V[0][0]], 0.0
+    
+    return None
 
 
 def gen_partitions(index, n=5): 
@@ -167,12 +166,12 @@ def gen_partitions(index, n=5):
 
 
 def topksteiner(names
-        ,C
-        ,queryobject
-        ,idx_charter_location
-        ,k=2
-        ,random_starts=5
-        ,n=5):
+        , C
+        , queryobject
+        , idx_charter_location
+        , k=2
+        , random_starts=5
+        , n=5):
 
     score_dict = {names[i]:[] for i in range(len(names))}
     for i in range(random_starts):
@@ -186,10 +185,9 @@ def topksteiner(names
                     , queryobject
                     , idx_charter_location)
 
-            for i,name in enumerate(namesbar):
-                score_dict[name]+=[out[i]]
-        logging.debug("finished iteration...collecting solutions".format(
-            i, random_starts))
+            for j, name in enumerate(namesbar):
+                score_dict[name]+=[out[j]]
+        logging.debug("finished iteration...collecting solutions")
     score_dict = {k:Counter(v) for k, v in score_dict.items()}
     Vnew = []
     for name in names:
@@ -209,8 +207,7 @@ def _pre_check_and_get_candidates(names, C, queryobject, idx_charter_location=[]
     oo,c = maybe_only_one(queryobject,names,idx_charter_location,V)
     if oo:
         return [],oo,c
-    else:
-        return V, [],[]
+    return V, [],[]
 
 
 def determine_with_steiner_tree(names
@@ -220,13 +217,14 @@ def determine_with_steiner_tree(names
         , maxlen=5):
     
     maybeV, maybesolution, maybecost = _pre_check_and_get_candidates(names
-            ,C
-            ,queryobject
-            ,idx_charter_location=idx_charter_location)
+            , C
+            , queryobject
+            , idx_charter_location=idx_charter_location)
+    
     if not maybeV:
         return maybesolution, maybecost
-    else:
-        V = maybeV
+    
+    V = maybeV
     logging.debug("instating candidate graph for {} names".format(len(names)))
     G = nx.Graph()
     if len(names) > maxlen*2 - 1:
@@ -236,35 +234,33 @@ def determine_with_steiner_tree(names
         logging.debug("heuristic starts...")
         
         V = topksteiner(names
-                ,C
-                ,queryobject
-                ,idx_charter_location
-                ,k=2
-                ,random_starts=5
-                ,n=maxlen)
+                , C
+                , queryobject
+                , idx_charter_location
+                , k=2
+                , random_starts=5
+                , n=maxlen)
 
         logging.debug("finished...current workload, \
                 placenamecandidates={},".format([len(x) for x in V]))
-    for i,idxset in enumerate(V):
-        for j,idxset_other in enumerate(V):
+    
+    for i, idxset in enumerate(V):
+        for j, idxset_other in enumerate(V):
             if i >= j:
                 continue
 
-            for k,idx in enumerate(idxset):
-                for m,idx_other in enumerate(idxset_other):
+            for idx in idxset:
+                for idx_other in idxset_other:
                     if not G.has_edge(idx, idx_other):
                         
-                        G.add_edge(idx,idx_other,weight=queryobject.cost(
+                        G.add_edge(idx, idx_other, weight=queryobject.cost(
                             names[i]
                             , idx
                             , names[j]
                             , idx_other
                             , idx_charter_location)
                             )
-                    #G.add_edge(idx,names[i],weight=0.0)
-    
-    
-    logging.debug("instated graph, graph debug: {}".format(nx.debug(G))) 
+     
     logging.debug("current workload, placenamecandidates={},".format(
         [len(x) for x in V]))
     
@@ -273,13 +269,10 @@ def determine_with_steiner_tree(names
         for j,idx in enumerate(V[i]):
             G.add_edge("name:"+name,idx, weight=very_large_number)
 
-    logging.debug("approximating Steiner tree".format(nx.debug(G))) 
-    res = steinertree.steiner_tree(G,["name:" + n for i, n in enumerate(names)])
+    res = steinertree.steiner_tree(G, ["name:" + n for i, n in enumerate(names)])
     #res = steinertree.steiner_tree(res,["name:"+n for n in names])
 
     res = nx.Graph(res)
-    logging.debug("Steiner tree approximate, graph debug: {}".format(
-        nx.debug(res)))
     
     triples = [a for a in res.edges(data=True)]
     logging.debug("Steiner graph triples: {}".format(triples))
@@ -346,8 +339,6 @@ def determine_with_stochastic_arrangement(names
 
     if not maybeV:
         return maybesolution, maybecost
-    else:
-        V = maybeV
     
     logging.debug("instating candidate graph for {} names".format(len(names)))
     
@@ -407,7 +398,6 @@ def determine_with_hill_climber(names
         , C
         , queryobject
         , idx_charter_location=[]
-        , iters=10
         , post_process_with_search=True
         , compute_cumulative_weight=False):
     
@@ -418,8 +408,7 @@ def determine_with_hill_climber(names
 
     if not maybeV:
         return maybesolution, maybecost
-    else:
-        V = maybeV
+    
     logging.debug("instating candidate graph for {} names".format(len(names)))
     logging.debug("name stats: {}, {}".format(names, [len(C[name]) for name in names]))
      
@@ -429,18 +418,18 @@ def determine_with_hill_climber(names
     cw = 0
     while len(tmpnames) < len(names):
         tmpw = 10000000
-        tmpi=-1
-        tmpc =None
+        tmpi = -1
+        tmpc = None
         for i in range(len(names)):
             if i in tmpis:
                 continue
             else:
                 for c in C[names[i]]:
-                    d=queryobject.cost(tmpnames[-1]
-                            ,tmpidx[-1]
-                            ,names[i]
-                            ,c
-                            ,idx_charter_location)
+                    d = queryobject.cost(tmpnames[-1]
+                            , tmpidx[-1]
+                            , names[i]
+                            , c
+                            , idx_charter_location)
                     if d < tmpw:
                         tmpw = d
                         tmpi = i
@@ -452,8 +441,8 @@ def determine_with_hill_climber(names
     
     #a little post processing with seach
     if post_process_with_search:
-        path, weight = search(tmpnames, C, queryobject
-                , init_station="-1",init_memory=([0.0], [["99999999"]], ["99999999"])
+        path, _ = search(tmpnames, C, queryobject
+                , init_station="-1", init_memory=([0.0], [["99999999"]], ["99999999"])
                 , places_in_regests = [idx_charter_location])
         sols = [C[names[i]][path[1:][tmpis.index(i)]] for i in range(len(names))]
     else:
@@ -477,11 +466,10 @@ def determine_with_hill_climber(names
 def determine_with_random(names
         , C
         , queryobject
-        , idx_charter_location=[]
-        , iters=10):
+        , idx_charter_location=[]):
     
     if not names:
-        return [],0.0
+        return [], 0.0
     
     logging.debug("names: {}".format(names))
     V = [list(set(C[name])) for name in names]

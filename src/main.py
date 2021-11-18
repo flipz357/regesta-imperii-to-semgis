@@ -21,9 +21,9 @@ def get_args():
     parser.add_argument("-log_level", nargs="?",default=2, type=int, 
             help="logging level, 1: info, 2: debug, 0: ciritcal")
 
-    parser.add_argument("-iterations", nargs="?",default=2, type=int, 
+    parser.add_argument("-iterations", nargs="?", default=2, type=int, 
             help="number of bootstrap iterations")
-    parser.add_argument("-unknown_strat", nargs="?",default="last", type=str, 
+    parser.add_argument("-unknown_strat", nargs="?", default="last", type=str, 
             help="unknown strat")
 
     parser.add_argument("--fresh_run", action='store_true',  
@@ -71,9 +71,9 @@ def get_args():
     parser.add_argument("-ner_method", nargs="?",default="spacy", type=str, 
             help="spacy or stanza")
     
-    args = parser.parse_args()
+    arguments = parser.parse_args()
     
-    return args
+    return arguments
 
 
 if __name__ == '__main__':
@@ -133,7 +133,7 @@ if __name__ == '__main__':
         logging.info("load saved place candidates from {}".format(
             args.place_candidate_file_path))
         
-        with open(args.place_candidate_file_path,"r") as f:
+        with open(args.place_candidate_file_path, "r") as f:
             C=json.load(f)
         
         logging.info("loaded")
@@ -142,13 +142,12 @@ if __name__ == '__main__':
     elif not CANDIDATE_EXISTS or args.fresh_run or args.fresh_candidates:
 
         logging.info("retrieving candidates.... this may take a while...")
-        C = gh.build_candidates(uniq_locations,data=geonames,ii=ii
-                ,multiprocessing=args.multi_processing)
+        C = gh.build_candidates(uniq_locations, ii=ii)
         logging.info("retrieving retrieved, stroing to {}".format(
             args.place_candidate_file_path))
 
         with open(args.place_candidate_file_path,"w") as f:
-            f.write(json.dumps(C,indent=4,sort_keys=True))
+            f.write(json.dumps(C, indent=4, sort_keys=True))
 
     c_stats = statistics.candidate_stats(C)
     logging.info("candidate statistics\n\
@@ -157,7 +156,7 @@ if __name__ == '__main__':
                  avg. places per name: {}\
                  percentiles 50th 75th 90th \
                  95th 99th: {}".format(c_stats[0], 
-                        c_stats[1],c_stats[2],c_stats[3]))
+                        c_stats[1], c_stats[2], c_stats[3]))
 
     if args.simple_candidate_extension:
         gh.maybe_extend_candidates(C, ii
@@ -169,11 +168,11 @@ if __name__ == '__main__':
                      avg. places per name: {}\
                      percentiles 50th 75th 90th \
                      95th 99th: {}".format(c_stats[0], 
-                            c_stats[1],c_stats[2],c_stats[3]))
+                            c_stats[1], c_stats[2], c_stats[3]))
 
 
     #intitalize query object
-    QO = ds.QueryObject(geonames,costfun=ds.cost1)
+    QO = ds.QueryObject(geonames, costfun=ds.cost1)
 
 
 
@@ -210,23 +209,23 @@ if __name__ == '__main__':
         
         #resolve itinerary
         path, cum_dist = search(names_not_unknown
-                ,C
-                ,QO
-                ,init_memory=([0.0]*len(C[names_not_unknown[0]])
-                    ,np.full( (len(C[names_not_unknown[0]]),1),-1).tolist()
-                    ,C[names_not_unknown[0]])
-                ,init_station=names[0]
-                ,places_in_regests=places_in_regests
+                , C
+                , QO
+                , init_memory=([0.0]*len(C[names_not_unknown[0]])
+                                , np.full( (len(C[names_not_unknown[0]]),1),-1).tolist()
+                                , C[names_not_unknown[0]])
+                , init_station=names[0]
+                , places_in_regests=places_in_regests
                 )
         logging.info("solving emperor routes finished; \
                 cumulative_distance {}".format(cum_dist))
         path = path[1:]
-        path = [C[name][path[i]] for i,name in enumerate(names_not_unknown)]
+        path = [C[name][path[i]] for i, name in enumerate(names_not_unknown)]
         
         places_in_regests, avg_cost = resolve_places_in_regests(
-                names_not_unknown_text,C,QO,path,method=args.text_place_solver)
+                names_not_unknown_text, C, QO, path, method=args.text_place_solver)
         logging.info("solving places in text finished; method={}, \
-                avg cost={}".format(args.text_place_solver,avg_cost))
+                avg cost={}".format(args.text_place_solver, avg_cost))
 
     ## checks and creating final output files
     assert len(path) == len(names_not_unknown)
@@ -237,7 +236,7 @@ if __name__ == '__main__':
     for i in range(len(path)):
         uri = regests[i]["uri"]
         place_predictions[uri] = {"used name":input_names[i]
-                ,"prediction:":gh.id_to_info_dict(path[i],geonames)}
+                ,"prediction:":gh.id_to_info_dict(path[i], geonames)}
         text_place_predictions[uri] = {}
         for idx in text_nes[uri]["ents"]:
             if "associated_with_loc" in text_nes[uri]["ents"][idx]:
@@ -272,7 +271,7 @@ if __name__ == '__main__':
                         text_nes[uri]["ents"][idx]["prediction"] = dummy
 
         if i % 10 == 0:
-            logging.debug("place_predictions saved {}/{}".format(i,len(path)))
+            logging.debug("place_predictions saved {}/{}".format(i, len(path)))
 
 
     logging.info("place prediction finished, storing entity place predictions \
@@ -281,9 +280,9 @@ if __name__ == '__main__':
                 "predictions/NE_locations_{}.json".format(args.runid)))
 
     # write files
-    with open("predictions/charter_locations_{}.json".format(args.runid),"w") as f:
-        f.write(json.dumps(place_predictions,indent=4))
-    with open("predictions/NE_locations_{}.json".format(args.runid),"w") as f:
-        f.write(json.dumps(text_nes,indent=4))
+    with open("predictions/charter_locations_{}.json".format(args.runid), "w") as f:
+        f.write(json.dumps(place_predictions, indent=4))
+    with open("predictions/NE_locations_{}.json".format(args.runid), "w") as f:
+        f.write(json.dumps(text_nes, indent=4))
     logging.info("place prediction finished, outputfiles written, program exiting...")
 

@@ -1,14 +1,9 @@
 import json
-import pickle
-from collections import Counter,defaultdict
+from collections import defaultdict
 from bs4 import BeautifulSoup
-import re
 import xml.etree.ElementTree as ET
-import itertools
-import numpy as np
 import os
 import _pickle
-import io
 import spacy
 import logging
 from constants import UNKNOWN, NOLOC, RI_RAW_PATH, RI_RAW_NAMESPACE
@@ -91,8 +86,7 @@ def regest_iter(path=RI_RAW_PATH):
             yield (coll, key, xmlfile)
 
 
-def regests_to_ls(path=RI_RAW_PATH
-        , persname=None
+def regests_to_ls(persname=None
         , locname=None
         , maxamount=-1
         , ids=[]
@@ -122,7 +116,7 @@ def regests_to_ls(path=RI_RAW_PATH
     
     c=0
     regests = []
-    for coll,key,regpath in regest_iter():
+    for coll, key, regpath in regest_iter():
         if maxamount != -1 and len(regests) == maxamount:
             return regests
         if ids and not c in ids:
@@ -209,9 +203,9 @@ def extract_text(et
         , val=""):
     count = 0
     string=""
-    for ch in et.iter(RI_RAW_NAMESPACE+name):
+    for ch in et.iter(RI_RAW_NAMESPACE + name):
         if attr == "":
-            count+=1
+            count += 1
             if count != 1:
                 raise ValueError("more than one")
             else:
@@ -254,25 +248,25 @@ def extract_divtexts(et, attribs):
 
     
 def readf(p):
-    with open(p,"r") as f:
+    with open(p, "r") as f:
         string = f.read()
         return string
 
    
 def writef(string,p):
-    with open(p,"w") as f:
+    with open(p, "w") as f:
         f.write(string)
 
 
 def regests2json(n, save_path="../ri-data/RI.json"):
     regests = regests_to_ls(maxamount=n)
-    with open(save_path,"w") as f:
+    with open(save_path, "w") as f:
         f.write(json.dumps(regests, indent=4, sort_keys=True))
     return None
 
 
 def loadjson(p="resources/RI.json"):
-    with open(p,"r") as f:
+    with open(p, "r") as f:
         return json.load(f)
 
 
@@ -288,9 +282,9 @@ def maybe_associated_with_loc(ent, nlp):
         return UNKNOWN
 
 
-def _extract_heads_from_tree(doc, token):
+def _extract_heads_from_tree(token):
     pathrels = []
-    maxiter=1000
+    maxiter = 1000
     i = 0
     while token.dep_ != "ROOT" and i < maxiter:
         rel = token.dep_
@@ -307,9 +301,9 @@ def _serialize_doc(doc):
     pos = ""
     dep = ""
     charoff = ""
-    head= ""
-    tag= ""
-    for i,token in enumerate(doc):
+    head = ""
+    tag = ""
+    for token in doc:
         tok += token.text.strip() + " "
         lemma += token.lemma_.strip() + " "
         pos += token.pos_.strip() + " "
@@ -388,7 +382,7 @@ def _extract_nes(regesttext, nlp, entity_types):
     last_entity_type = ""
     for ent in doc.ents:
         label = ent.label_
-        pathrels = _extract_heads_from_tree(doc, ent.root)
+        pathrels = _extract_heads_from_tree(ent.root)
         entity_type = _maybe_get_ent_type(ent, doc, entity_types, last_entity_type)
         last_entity_type = entity_type
         if label == "LOC":
@@ -485,10 +479,10 @@ def extract_nes(jsonregests, check_if_saved=True, clean=lambda x:x
     """
     if check_if_saved:
         if os.path.exists(save_path):
-            with open(save_path,"r") as f:
+            with open(save_path, "r") as f:
                 dat = json.load(f)
             #_maybe_convert_ent_dict_to_actual_format(dat)
-            _clean_nes(dat,clean)
+            _clean_nes(dat, clean)
             return dat
     
     if method == "spacy":
@@ -507,15 +501,15 @@ def extract_nes(jsonregests, check_if_saved=True, clean=lambda x:x
         logging.info("stanza pipeline loaded")
     
     out = {}
-    for i,jr in enumerate(jsonregests):
+    for i, jr in enumerate(jsonregests):
         key = jr["uri"]
         out[key] = _extract_nes(jr["regestentext_clean"], nlp, entity_types=entity_types) 
         #print(jr["regestentext_clean"])
         if i % 1000 == 0:
             logging.info("{}/{} regests spacy processed".format(i, len(jsonregests)))
-    _clean_nes(out,clean)
+    _clean_nes(out, clean)
     
-    with open(save_path,"w") as f:
+    with open(save_path, "w") as f:
         f.write(json.dumps(out))
     
     return out
@@ -581,8 +575,8 @@ def load_manual(p):
             #print(l,"could not convert to float")
             not_loaded+=1
             continue
-        dic[origname] = (normalizedname,lat,lng,elms[14])
-    print("could load",len(lines)-not_loaded
+        dic[origname] = (normalizedname, lat, lng, elms[14])
+    print("could load",len(lines) - not_loaded
             , "from the", len(lines),"gold name-place resolutions")
     return dic
 
@@ -609,6 +603,6 @@ def load_manual_geonamesid(p):
         else: 
             not_loaded+=1
             continue
-    print("could load",len(lines)-not_loaded
+    print("could load",len(lines) - not_loaded
             , "from the", len(lines),"gold name-place resolutions")
     return dic

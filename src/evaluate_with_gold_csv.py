@@ -2,11 +2,9 @@ import numpy as np
 import json
 from geopy.distance import vincenty
 import data_helpers as dh
-import sys
 from sklearn.metrics import mean_squared_error
 from scipy.stats import pearsonr
 import argparse
-from data_helpers import load_manual
 import logging
 from constants import UNKNOWN
 
@@ -119,7 +117,6 @@ def get_data(pred_uri_loc_mapping
     
     this_preds = pred_uri_loc_mapping
     this = []
-    o19 = []
     gold = []
     done ={}
     idx_uri  = {}
@@ -231,9 +228,8 @@ def get_data(pred_uri_loc_mapping
                 if not tup:
                     continue
                 if macrotimes:
-                    if year in done[year].get(text) \
-                            and level == "macro":
-                                continue
+                    if year in done[year].get(text) and level == "macro":
+                        continue
                 elif any([text in done[k] for k in done]) \
                         and level == "macro":
                     continue
@@ -263,10 +259,12 @@ def get_data(pred_uri_loc_mapping
 
 
 def evaluate(pred_uri_loc_mapping, gold_uri_loc_mapping, level = "event"):
+    
     this, gold, years = get_data(pred_uri_loc_mapping
             , gold_uri_loc_mapping
             , level=level
             , text_places=False)    
+    
     km_deltas_this = [vincenty(this[i],gold[i]).km for i in range(len(gold))]
     dates = [i for i in range(len(years)) if years[i]  > 700 and years[i] < 1525]
     print(list(sorted(list(set(years)))))
@@ -331,19 +329,17 @@ def evaluate(pred_uri_loc_mapping, gold_uri_loc_mapping, level = "event"):
 
     mean_delta_this = np.mean(km_deltas_this)
     
-    def p(num,x):
-        return round(num*100, 1)
     
     print(len(this),len(gold)) 
-    print("latitude pearsor", pearsonr([x[0] for x in this],[x[0] for x in gold]))    
-    print("longitude pearsor", pearsonr([x[1] for x in this],[x[1] for x in gold]))
-    print("latitude rmse", np.sqrt(mean_squared_error([x[0] for x in this],[x[0] for x in gold])))
-    print("longitude rmse", np.sqrt(mean_squared_error([x[1] for x in this],[x[1] for x in gold])))
-    print("mean delta km",mean_delta_this)
+    print("latitude pearsor", pearsonr([x[0] for x in this], [x[0] for x in gold]))    
+    print("longitude pearsor", pearsonr([x[1] for x in this], [x[1] for x in gold]))
+    print("latitude rmse", np.sqrt(mean_squared_error([x[0] for x in this], [x[0] for x in gold])))
+    print("longitude rmse", np.sqrt(mean_squared_error([x[1] for x in this], [x[1] for x in gold])))
+    print("mean delta km", mean_delta_this)
 
     print("percentile deviations:")
     for k in range(50,100,5):
-        print("\t{}\t{}".format(k,np.percentile(km_deltas_this,k)))
+        print("\t{}\t{}".format(k, np.percentile(km_deltas_this,k)))
     
     print("higher better","max:",len([x for x in km_deltas_this]))
     print("# < 5km",len([x for x in km_deltas_this if x < 5])
@@ -399,18 +395,15 @@ def evaluate_text_places(pred_uri_loc_mapping, gold_uri_loc_mapping, level = "ev
             dt = [datedict["km delta"][i] for i in range(len(datedict["km delta"])) 
                     if datedict["century"][i] == y]
             delta = np.median(dt)
-            s+=delta_delta
+            s += delta
             #print(s,s2)
             string+=" \\\\\n{} & {} & {} ".format(y
-                    ,delta
-                    ,s)
-        print(outd)
+                    , delta
+                    , s)
         print(string)
     
     mean_delta_this = np.mean(km_deltas_this)
     
-    def p(num,x):
-        return round(num*100, 1)
     
     print("latitude pearsor", pearsonr([x[0] for x in this],[x[0] for x in gold]))
     print("longitude pearsor", pearsonr([x[1] for x in this],[x[1] for x in gold]))
