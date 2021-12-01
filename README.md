@@ -129,10 +129,12 @@ We recommend peaking into the bash script `full_pipeline.sh` to get an overview 
 
 ### Citation
 
+If you like the project please consider citing the following project-related works:
+
 Bib:
 
 ```
-@inproceedings{DBLP:conf/chr/Opitz20,
+@inproceedings{opitz20,
   author    = {Juri Opitz},
   editor    = {Folgert Karsdorp and
                Barbara McGillivray and
@@ -148,11 +150,24 @@ Bib:
   publisher = {CEUR-WS.org},
   year      = {2020},
   url       = {http://ceur-ws.org/Vol-2723/long12.pdf},
-  biburl    = {https://dblp.org/rec/conf/chr/Opitz20.bib},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
+
+@inproceedings{opitz19,
+    author = {Opitz, Juri and Born, Leo and Nastase, Vivi and Pultar, Yannick},
+    title = {Automatic Reconstruction of Emperor Itineraries from the Regesta Imperii},
+    year = {2019},
+    isbn = {9781450371940},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3322905.3322921},
+    doi = {10.1145/3322905.3322921},
+    booktitle = {Proceedings of the 3rd International Conference on Digital Access to Textual Cultural Heritage},
+    pages = {39–44},
+    numpages = {6},
+    keywords = {place name prediction, Historic Itineraries, coordinate prediction},
+    location = {Brussels, Belgium},
+    series = {DATeCH2019}
+}
+
 ```
 
-APA:
-
-`Juri Opitz (2020). Automatic Creation of a Large-Scale Tempo-Spatial and Semantic Medieval European Information System. In Proceedings of the Workshop on Computational Humanities Research (CHR 2020), Amsterdam, The Netherlands, November 18-20, 2020 (pp. 397–419). CEUR-WS.org.`
