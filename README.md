@@ -1,8 +1,8 @@
 # (Automatically) Creating a Semantic Medieval GIS from the Regesta Imperii
 
-This project contains the scripts to create a semantic medieval knowledge graph with geographical information. It is constructed from summaries of medieval charters and event descriptions contained in the [Regesta Imperii](http://regesta-imperii.de/en/home.html). More detailed description can be found [here](http://www.ceur-ws.org/Vol-2723/long12.pdf).
+This project contains the scripts to create a semantic medieval knowledge graph with geographical information. It is constructed from summaries of medieval charters and event descriptions contained in the [Regesta Imperii](http://regesta-imperii.de/en/home.html). More detailed description can be found [in this paper](http://www.ceur-ws.org/Vol-2723/long12.pdf) and [in this paper](https://dl.acm.org/doi/10.1145/3322905.3322921).
 
-**V0.1**: Intitial release, **prediction of places for medieval place names** in charters and charter origins, extracting **relations between medieval entities** (e.g., x bestows y to z, x confirms y to z) with dependency parsing.
+**V0.1**: Intitial release, **prediction of places for medieval place names** in charters and charter origins (which relate to emporer itineraries), extracting **relations between medieval entities** (e.g., x bestows y to z, x confirms y to z) with dependency parsing.
 
 **V0.2**: Predicted **titles of named entities** (counts, monks, castles, city, ....)
 
@@ -111,7 +111,7 @@ By using the individual building blocks of this project, you can do specific thi
 - you can get up-to-date RI-snapshots in xml (see ri-crawler), scripts to convert the xml files into nicer json 
 - do dependency parsing and NER (see src/ and `src/data_helpers.py`)
 - scripts to plot heatmaps (see vis/)
-- use example scripts to create spatially grounded semantic medieval KGs (see more-tools/)
+- use example scripts to create spatially grounded semantic medieval KGs (see more-tools/). Note: this is very noisy as of know and would desperately need some filtering.
 - and more, also see below
 
 We recommend peaking into the bash script `full_pipeline.sh` to get an overview over some central steps.
