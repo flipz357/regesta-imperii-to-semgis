@@ -11,8 +11,6 @@ echo "cleaning up old filed"
 
 rm predictions/charter_locations_$runid.json
 rm predictions/NE_locations_$runid.json
-rm resources/ENTITIES_$runid.json
-rm resources/CANDIDATES_$runid.json
 
 echo "starting joint resolution"
 
