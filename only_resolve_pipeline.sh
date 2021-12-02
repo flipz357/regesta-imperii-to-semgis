@@ -29,8 +29,18 @@ python add_automatic_centers_to_predictions.py \
     -ner_place_file predictions/NE_locations_$runid.json \
     --solve_jointly
 
+# evaluate: set -level macro for unique place names and -level micro for all occuring place names
+
+echo "evaluate itinerary error"
+
 python evaluate_with_gold_csv.py \
-    -itinerary_file predictions/charter_locations_$runid-_centers_added.json \
+    -input_file predictions/charter_locations_$runid-_centers_added.json \
+    -level macro
+
+echo "evaluate text place error"
+
+python evaluate_with_gold_csv.py \
+    -input_file predictions/NE_locations_$runid-_centers_added.json \
     -level macro
 
 cd ..

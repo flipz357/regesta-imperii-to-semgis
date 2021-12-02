@@ -11,8 +11,8 @@ from constants import UNKNOWN
 def get_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-itinerary_file", required=True, type=str,
-                            help="path to itinerary predictions with centers added")
+    parser.add_argument("-input_file", required=True, type=str,
+                            help="path to itinerary predictions or NE location predictions")
 
     parser.add_argument("-gold_csv_path", required=False, type=str, 
                             default = "../ri-data/ortsliste_ri_neu.txt",
@@ -436,14 +436,14 @@ if __name__ == "__main__":
     args = get_args()
     with open(args.RI_as_json_path) as f:
         RI = {dat["uri"]:dat for dat in json.load(f)}
-    with open(args.itinerary_file) as f:
+    with open(args.input_file) as f:
         pred_uri_loc_mapping = json.load(f)
     #man = load_manual(args.gold_csv_path)
     gold_uri_loc_mapping = create_gold_uri_loc_mapping(RI, args.gold_csv_path, args.human_anno_type)
-    with open(args.itinerary_file) as f:
+    with open(args.input_file) as f:
         pred_uri_loc_papping = json.load(f) 
-    if "charter_locations" in args.itinerary_file:
+    if "charter_locations" in args.input_file:
         evaluate(pred_uri_loc_mapping, gold_uri_loc_mapping, args.level)
-    elif "NE_locations" in args.itinerary_file:
+    elif "NE_locations" in args.input_file:
         evaluate_text_places(pred_uri_loc_mapping, gold_uri_loc_mapping, args.level)
 
