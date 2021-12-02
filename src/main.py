@@ -214,7 +214,6 @@ if __name__ == '__main__':
                 , init_memory=([0.0]*len(C[names_not_unknown[0]])
                                 , np.full( (len(C[names_not_unknown[0]]),1),-1).tolist()
                                 , C[names_not_unknown[0]])
-                , init_station=names[0]
                 , places_in_regests=places_in_regests
                 )
         logging.info("solving emperor routes finished; \

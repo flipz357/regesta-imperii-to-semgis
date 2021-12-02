@@ -32,7 +32,6 @@ def search(stations
             geonameid candidates,e.g. C={Rome:[0,1,2], Pisa:[5,19,25,13]}
         queryobject (QueryObject): an object that computes distances 
             between geoname ids
-        init_station (string): dummy index, start node,default="-1"
         init_memory (tuple): dummy start memory,
             default=see above
         places_in_regests (list): list of lists with geonameids occuring in 
@@ -356,7 +355,6 @@ def determine_with_stochastic_arrangement(names
         path,weight = search(namesbar
                 , C
                 , queryobject
-                ,init_station="-1"
                 ,init_memory=([0.0], [["99999999"]], ["99999999"])
                 ,places_in_regests = [idx_charter_location])
         if weight < minw:
@@ -442,8 +440,8 @@ def determine_with_hill_climber(names
     #a little post processing with seach
     if post_process_with_search:
         path, _ = search(tmpnames, C, queryobject
-                , init_station="-1", init_memory=([0.0], [["99999999"]], ["99999999"])
-                , places_in_regests = [idx_charter_location])
+                        , init_memory=([0.0], [["99999999"]], ["99999999"])
+                        , places_in_regests = [idx_charter_location])
         sols = [C[names[i]][path[1:][tmpis.index(i)]] for i in range(len(names))]
     else:
         sols = tmpidx
@@ -507,7 +505,7 @@ def resolve_places_in_regests(namess
     cumcost = []
     for i, names in enumerate(namess): 
         
-        res,cost = method(names
+        res, cost = method(names
                 , C
                 , queryobject
                 , idx_charter_location=helper_placess[i]
